@@ -50,11 +50,50 @@ data2_slice <- function(data, first_row, first_col, last_row, last_col){
            sex = sex)
 }
 
-data2_1 <- data2_slice(data = data2_raw,
-                       first_row = 1,
-                       first_col = 1,
-                       last_row = 17,
-                       last_col = 9)
+#data2_1 <- data2_slice(data = data2_raw,
+#                       first_row = 1,
+#                       first_col = 1,
+#                       last_row = 17,
+#                       last_col = 9)
+
+data2_coordinates <- tibble(first_row = c(1,
+                                       1,
+                                       19,
+                                       19,
+                                       37,
+                                       37,
+                                       55),
+                         first_col = c(1,
+                                       11,
+                                       1,
+                                       11,
+                                       1,
+                                       11,
+                                       1),
+                         last_row = c(17,
+                                      17,
+                                      35,
+                                      35,
+                                      53,
+                                      53,
+                                      71),
+                         last_col = c(9,
+                                      18,
+                                      7,
+                                      19,
+                                      9,
+                                      19,
+                                      9))
+
+data2_combined <- data2_coordinates %>%
+  mutate(subtable = pmap(.l = data2_coordinates,
+                         .f = ~ data2_slice(data = data2_raw,
+                                            first_row = ..1,
+                                            first_col = ..2,
+                                            last_row = ..3,
+                                            last_col = ..4))) %>%
+  select(!first_row:last_col) %>%
+  unnest(cols = subtable)
 
 #data_raw <- read_tsv(file = "data/_raw/my_raw_data.tsv")
 
