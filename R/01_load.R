@@ -1,8 +1,6 @@
 # Load libraries ----------------------------------------------------------
 library("tidyverse")
 library("readxl")
-library("bench")
-library("profvis")
 
 # Define functions --------------------------------------------------------
 source(file = "R/99_project_functions.R")
