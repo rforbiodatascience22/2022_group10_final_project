@@ -1,104 +1,60 @@
 # Load libraries ----------------------------------------------------------
 library("tidyverse")
 library("readxl")
+library("bench")
+library("profvis")
 
 # Define functions --------------------------------------------------------
 source(file = "R/99_project_functions.R")
 
 # Load data ---------------------------------------------------------------
-#gzfile(description = "data/_raw/JEvolBiol_Sensory evolution Poecilimon_Database.xls.gz") %>%
-#  convert(out_file = "data.xlsx")
+morphometric_data_raw <- read_xls(path = "data/_raw/JEvolBiol_Sensory evolution Poecilimon_Database.xls",
+                                  sheet = "Database")
+physiological_data_raw <- read_xls(path = "data/_raw/JEvolBiol_Sensory evolution Poecilimon_Database.xls",
+                                   sheet = "Database 2",
+                                   skip = 1,
+                                   col_names = FALSE)
 
-#gzfile(description = "data/_raw/JEvolBiol_Sensory evolution Poecilimon_Database.xls.gz") %>%
-data1_raw <- read_xls(path = "data/_raw/JEvolBiol_Sensory evolution Poecilimon_Database.xls",
-                      sheet = "Database")
-data2_raw <- read_xls(path = "data/_raw/JEvolBiol_Sensory evolution Poecilimon_Database.xls",
-                      sheet = "Database 2",
-                      skip = 1,
-                      col_names = FALSE)
-
-data2_slice <- function(data, first_row, first_col, last_row, last_col){
-  headers <- data %>%
-    select(first_col: (first_col + 1) ) %>%
-    slice(first_row)
-  
-  name <- headers %>%
-    pull(1)
-  
-  sex <- headers %>%
-    pull(2)
-  
-  cricket_indicies <- data %>%
-    select((first_col + 1) :last_col) %>%
-    slice(first_row + 1) %>%
-    as.character()
-  
-  data_slice <- data %>%
-    select(first_col:last_col) %>%
-    slice( (first_row + 2) :last_row)
-  
-  colnames(data_slice) <- c("hertz",
-                            cricket_indicies)
-  
-  data_slice <- data_slice %>%
-    pivot_longer(cols = !hertz,
-                 names_to = "cricket_id",
-                 values_to = "decibel")
-  
-  data_slice %>%
-    mutate(name = name,
-           sex = sex)
-}
-
-#data2_1 <- data2_slice(data = data2_raw,
-#                       first_row = 1,
-#                       first_col = 1,
-#                       last_row = 17,
-#                       last_col = 9)
-
-data2_coordinates <- tibble(first_row = c(1,
-                                       1,
-                                       19,
-                                       19,
-                                       37,
-                                       37,
-                                       55),
-                         first_col = c(1,
-                                       11,
-                                       1,
-                                       11,
-                                       1,
-                                       11,
-                                       1),
-                         last_row = c(17,
-                                      17,
-                                      35,
-                                      35,
-                                      53,
-                                      53,
-                                      71),
-                         last_col = c(9,
-                                      18,
-                                      7,
-                                      19,
-                                      9,
-                                      19,
-                                      9))
-
-data2_combined <- data2_coordinates %>%
-  mutate(subtable = pmap(.l = data2_coordinates,
-                         .f = ~ data2_slice(data = data2_raw,
-                                            first_row = ..1,
-                                            first_col = ..2,
-                                            last_row = ..3,
-                                            last_col = ..4))) %>%
-  select(!first_row:last_col) %>%
-  unnest(cols = subtable)
-
-#data_raw <- read_tsv(file = "data/_raw/my_raw_data.tsv")
+meta_data_raw <- read_xls(path = "data/_raw/jeb12294-sup-0001-tables1.xls",
+                          skip = 3,
+                          col_names = FALSE)
 
 # Wrangle data ------------------------------------------------------------
-#my_data <- my_data_raw # %>% ...
+physiological_subtable_coordinates <- tibble(first_row = c(1,
+                                                           1,
+                                                           19,
+                                                           19,
+                                                           37,
+                                                           37,
+                                                           55),
+                                             first_column = c(1,
+                                                              11,
+                                                              1,
+                                                              11,
+                                                              1,
+                                                              11,
+                                                              1),
+                                             last_row = c(17,
+                                                          17,
+                                                          35,
+                                                          35,
+                                                          53,
+                                                          53,
+                                                          71),
+                                             last_column = c(9,
+                                                             18,
+                                                             7,
+                                                             19,
+                                                             9,
+                                                             19,
+                                                             9))
+
+physiological_data <- physiological_subtable_coordinates %>%
+  pmap_dfr(.f = ~ tidy_subtable_physiological(data = physiological_data_raw,
+                                              first_row = ..1,
+                                              first_column = ..2,
+                                              last_row = ..3,
+                                              last_column = ..4))
 
 # Write data --------------------------------------------------------------
 #write_tsv(x = my_data,

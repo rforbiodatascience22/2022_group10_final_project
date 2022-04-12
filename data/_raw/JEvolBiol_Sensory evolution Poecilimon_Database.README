@@ -1,9 +1,8 @@
-The "JEvolBiol_Sensory evolution Poecilimon_Database.xls.gz" file was retrieved
+The "JEvolBiol_Sensory evolution Poecilimon_Database.xls" file was retrieved
 from the site https://datadryad.org/stash/dataset/doi:10.5061%2Fdryad.49jg0 at
-2022-04-08 18:03.
+2022-04-11 14:39.
 
 Steps to retrive file:
-1. Go to above mentioned side
-2. Click "Download dataset" under "Data Files" on the right
+1. Go to above mentioned site
+2. Click on "Download dataset" under "Data Files" on the right
 3. Decompress the downloaded file
-4. Compress the file to gzip format
