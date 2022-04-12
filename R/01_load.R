@@ -48,12 +48,36 @@ physiological_subtable_coordinates <- tibble(first_row = c(1,
                                                              9))
 
 physiological_data <- physiological_subtable_coordinates %>%
-  pmap_dfr(.f = ~ tidy_subtable_physiological(data = physiological_data_raw,
+  pmap_dfr(.f = ~ tidy_extract_physiological(data = physiological_data_raw,
                                               first_row = ..1,
                                               first_column = ..2,
                                               last_row = ..3,
                                               last_column = ..4))
 
+meta_subtable_coordinates <- tibble(first_row = c(2,
+                                                  5,
+                                                  10,
+                                                  14,
+                                                  17,
+                                                  25),
+                                    last_row = c(3,
+                                                 9,
+                                                 13,
+                                                 16,
+                                                 24,
+                                                 28))
+
+meta_data <- meta_subtable_coordinates %>%
+  pmap_dfr(.f = ~ tidy_extract_meta(data = meta_data_raw,
+                                             first_row = ..1,
+                                             first_column = 1,
+                                             last_row = ..2,
+                                             last_column = 6))
+
 # Write data --------------------------------------------------------------
-#write_tsv(x = my_data,
-#          file = "data/01_my_data.tsv")
+write_tsv(x = morphometric_data_raw,
+          file = "data/01_morphometric_data")
+write_tsv(x = physiological_data,
+          file = "data/01_physiological_data")
+write_tsv(x = meta_data,
+          file = "data/01_meta_data")
