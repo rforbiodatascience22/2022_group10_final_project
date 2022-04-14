@@ -19,8 +19,8 @@ my_data_clean2 <- my_data2 %>% mutate(frequency = str_extract(frequency,
                                       mutate(auditory_threshold = str_extract(auditory_threshold,pattern="\\d+")) %>%
                                       mutate(sex = str_remove_all(sex,pattern="individuals"))
 names(my_data3) <- c("No.","Species","Communication_system","Location","Year","Anatomy_Neuroanatomy_Physiology","group")
-my_data_clean3 <- my_data3 %>% mutate(Communication_system = str_replace(Communication_system,Communication_system =="(Uni) Obligat parthenogenetic","Uni-directional")
-                            %>% mutate(Year = str_extract(Year,pattern="\\d+")))
+my_data_clean3 <- my_data3 %>%#mutate(Communication_system=str_replace(Communication_system,"(Uni) Obligat parthenogenetic","Uni-directional"),
+                      mutate(Year = str_extract(Year,pattern="\\d+"))%>%mutate(Species=str_extract(Species,pattern="P.\\s\\w*\\s"))
 
 # Write data --------------------------------------------------------------
 write_tsv(x = my_data_clean1,
