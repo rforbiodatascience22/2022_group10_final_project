@@ -81,10 +81,13 @@ meta_data <- meta_coordinates %>%
 
 # Write data --------------------------------------------------------------
 write_tsv(x = morphometric_data_raw,
-          file = "data/01_morphometric_data.tsv")
+          file = "data/01_morphometric_data.tsv",
+          na = "")
 
 write_tsv(x = physiological_data,
-          file = "data/01_physiological_data.tsv")
+          file = "data/01_physiological_data.tsv",
+          na = "")
 
 write_tsv(x = meta_data,
-          file = "data/01_meta_data.tsv")
+          file = "data/01_meta_data.tsv",
+          na = "")
