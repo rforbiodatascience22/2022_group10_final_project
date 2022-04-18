@@ -34,7 +34,7 @@ extractor <- function(path = "data/_raw/JEvolBiol_Sensory evolution Poecilimon_D
                  values_to = "decibel")
   
   data %>% 
-    mutate(specie = specie, 
+    mutate(species = species, 
            sex = sex, 
            hertz = as.character(hertz))
   
