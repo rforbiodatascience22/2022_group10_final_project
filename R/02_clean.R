@@ -22,20 +22,19 @@ meta_data <- read_tsv(file = "data/01_meta_data.tsv",
 # Wrangle data ------------------------------------------------------------
 ## Morphometric data ------------------------------------------------------
 # Rename columns
-morphometric_data <- morphometric_data %>%
+morphometric_data_clean <- morphometric_data %>%
   rename_with(.fn = ~ .x %>%
                 str_to_lower() %>%
                 str_replace_all(pattern = "\\s",
                             replacement = "_") %>%
                 str_replace(pattern = "\\[mm\\]$",
                             replacement = "length")) %>%
-  rename(sensillae_count = sensillae)
+  rename(sensillae_count = sensillae) %>%
 
 # Clean column values
-morphometric_data_clean <- morphometric_data %>%
   mutate(across(.cols = everything(),
-                .fns = str_trim)) %>%
-  mutate(sex = case_when(sex == "m" ~ "male",
+                .fns = str_trim),
+         sex = case_when(sex == "m" ~ "male",
                          sex == "f" ~ "female"),
          genus_species = {str_sub(string = genus,
                                   start = 1,
@@ -73,35 +72,27 @@ physiological_data_clean <- physiological_data %>%
 # Rename columns
 meta_data <- meta_data %>%
   rename(species_id = No.,
-         genus_species_article = Species,
-         communication_system_reproduction_method = `Communication system`,
-         location_gps_coordinates = Location,
-         collection_date_interval = Date,
-         experiments = `Anatomy, Neuroanatomy, Physiology`)
+         communication_system = `Communication system`)
 
 # Clean column values
 meta_data_clean <- meta_data %>%
-  filter(if_any(.cols = !c(location_gps_coordinates,
+  filter(if_any(.cols = !c(Location,
                            species_group),
                 .fns = ~ !is.na(.))) %>%
   fill(everything()) %>%
   mutate(across(.cols = everything(),
                 .fns = str_trim)) %>%
-  extract(col = genus_species_article,
+  extract(col = Species,
           into = c("genus_species",
                    "article_authors",
                    "article_year"),
           regex = "^(\\w(?:\\.|\\w+)\\s+\\w+)\\s+\\(?(.+),\\s+(\\d{4})\\)?$") %>%
-  extract(col = communication_system_reproduction_method,
-          into = c("communication_system",
-                   "obligat_parthenogenetic"),
-          regex = "^(\\(?(?:Uni|Bi)(?:\\)|-directional))(?:\\s+(Obligat\\s+parthenogenetic))?") %>%
-  extract(col = location_gps_coordinates,
+  extract(col = Location,
           into = c("location", 
                    "latitude",
                    "longitude"),
           regex = "^(.+?)\\s*\\((\\d+°\\d+'(?:\\d+'')?\\s*N),\\s*(\\d+°\\d+'(?:\\d+'')?\\s*E)\\)") %>%
-  separate(col = collection_date_interval,
+  separate(col = Date,
            into = c("collection_date_start",
                     "collection_date_end"),
            sep = "-",
@@ -111,22 +102,22 @@ meta_data_clean <- meta_data %>%
                                      replacement = "\\1\\. \\2"),
          species_id = case_when(genus_species == "I. modestior" ~ "0",
                                 TRUE ~ species_id),
+         obligat_parthenogenetic = str_detect(string = communication_system,
+                                              pattern = "\\s+Obligat\\s+parthenogenetic$"),
          communication_system = {communication_system %>%
              str_to_lower() %>%
-             str_replace(pattern = "^\\((uni|bi)\\)$",
+             str_replace(pattern = "^\\((uni|bi)\\).*$",
                          replacement = "\\1-directional")},
-         obligat_parthenogenetic = obligat_parthenogenetic == "Obligat parthenogenetic",
-         species_group = str_replace(string = species_group,
-                                     pattern = "^(\\w+)-group$",
-                                     replacement = "\\1"),
-         species_group = case_when(species_group == "outgroup" ~ "costata",
-                                   TRUE ~ species_group),
+         species_group = {case_when(species_group == "outgroup" ~ "costata",
+                                    TRUE ~ species_group) %>%
+             str_replace(pattern = "^(\\w+)-group$",
+                         replacement = "\\1")},
          outgroup = species_group == "costata",
-         anatomy = str_detect(string = experiments,
+         anatomy = str_detect(string = `Anatomy, Neuroanatomy, Physiology`,
                               pattern = "^A(\\s+|$)"),
-         neuroanatomy = str_detect(string = experiments,
+         neuroanatomy = str_detect(string = `Anatomy, Neuroanatomy, Physiology`,
                                    pattern = "(^|\\s+)NA(\\s+|$)"),
-         physiology = str_detect(string = experiments,
+         physiology = str_detect(string = `Anatomy, Neuroanatomy, Physiology`,
                                  pattern = "(^|\\s+)P$"),
          article_authors_count = {article_authors %>% 
              str_count(pattern = "(\\s+and\\s+|,\\s+)") %>% 
@@ -162,7 +153,7 @@ meta_data_clean <- meta_data_clean %>%
                         1:article_authors_max_count),
            sep = "(\\s+and\\s+|,\\s+)",
            fill = "right") %>%
-  select(!c(experiments,
+  select(!c(`Anatomy, Neuroanatomy, Physiology`,
             article_authors_count))
 
 # Write data --------------------------------------------------------------
