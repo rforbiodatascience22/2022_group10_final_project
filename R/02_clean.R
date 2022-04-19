@@ -1,5 +1,7 @@
 # Load libraries ----------------------------------------------------------
 library("tidyverse")
+library("sp")
+library("lubridate")
 
 # Define functions --------------------------------------------------------
 source(file = "R/99_project_functions.R")
@@ -33,12 +35,22 @@ morphometric_data <- morphometric_data %>%
 morphometric_data_clean <- morphometric_data %>%
   mutate_all(.funs = str_trim) %>%
   mutate(sex = case_when(sex == "m" ~ "male",
-                         sex == "f" ~ "female"))
+                         sex == "f" ~ "female"),
+         genus_species = {str_sub(string = genus,
+                                  start = 1,
+                                  end = 1) %>%
+             str_c(species,
+                   sep = ". ")})
 
 ## Physiological data -----------------------------------------------------
 # Clean column values
 physiological_data_clean <- physiological_data %>%
   mutate_all(.funs = str_trim) %>%
+  separate(col = genus_species,
+           into = c("genus",
+                    "species"),
+           sep = "\\s+",
+           remove = FALSE) %>%
   mutate(frequency = str_replace(string = frequency,
                                  pattern = "^(\\d+)\\s*kHz$",
                                  replacement = "\\1"),
@@ -50,7 +62,9 @@ physiological_data_clean <- physiological_data %>%
                                           replacement = "\\1"),
          sex = str_replace(string = sex,
                            pattern = "^(male|female)\\s+individuals$",
-                           replacement = "\\1"))
+                           replacement = "\\1"),
+         genus = case_when(genus == "P." ~ "Poecilimon",
+                           genus == "I." ~ "Isophya"))
 
 
 ## Meta data --------------------------------------------------------------
@@ -59,14 +73,14 @@ meta_data <- meta_data %>%
   rename(species_id = No.,
          genus_species_article = Species,
          communication_system_reproduction_method = `Communication system`,
-         location = Location,
+         location_gps_coordinates = Location,
          collection_date_interval = Date,
          experiments = `Anatomy, Neuroanatomy, Physiology`)
 
 # Clean column values
 meta_data_clean <- meta_data %>%
-  filter(if_any(.cols = !c(location,
-                           group),
+  filter(if_any(.cols = !c(location_gps_coordinates,
+                           species_group),
                 .fns = ~ !is.na(.))) %>%
   fill(everything()) %>%
   mutate_all(.funs = str_trim) %>%
@@ -79,6 +93,16 @@ meta_data_clean <- meta_data %>%
           into = c("communication_system",
                    "obligat_parthenogenetic"),
           regex = "^(\\(?(?:Uni|Bi)(?:\\)|-directional))(?:\\s+(Obligat\\s+parthenogenetic))?") %>%
+  extract(col = location_gps_coordinates,
+          into = c("location", 
+                   "latitude",
+                   "longitude"),
+          regex = "^(.+?)\\s*\\((\\d+°\\d+'(?:\\d+'')?\\s*N),\\s*(\\d+°\\d+'(?:\\d+'')?\\s*E)\\)") %>%
+  separate(col = collection_date_interval,
+           into = c("collection_date_start",
+                    "collection_date_end"),
+           sep = "-",
+           fill = "right") %>%
   mutate(genus_species = str_replace(string = genus_species,
                                      pattern = "^(\\w)(?:\\.|\\w+)\\s+(\\w+)$",
                                      replacement = "\\1\\. \\2"),
@@ -89,16 +113,54 @@ meta_data_clean <- meta_data %>%
              str_replace(pattern = "^\\((uni|bi)\\)$",
                          replacement = "\\1-directional")},
          obligat_parthenogenetic = obligat_parthenogenetic == "Obligat parthenogenetic",
-         group = str_replace(string = group,
-                             pattern = "^(\\w+)-group$",
-                             replacement = "\\1"),
+         species_group = str_replace(string = species_group,
+                                     pattern = "^(\\w+)-group$",
+                                     replacement = "\\1"),
+         species_group = case_when(species_group == "outgroup" ~ "costata",
+                                   TRUE ~ species_group),
+         outgroup = species_group == "costata",
          anatomy = str_detect(string = experiments,
                               pattern = "^A(\\s+|$)"),
          neuroanatomy = str_detect(string = experiments,
                                    pattern = "(^|\\s+)NA(\\s+|$)"),
          physiology = str_detect(string = experiments,
-                                 pattern = "(^|\\s+)P$")) %>%
-  select(!experiments)
+                                 pattern = "(^|\\s+)P$"),
+         article_authors_count = {article_authors %>% 
+             str_count(pattern = "(\\s+and\\s+|,\\s+)") %>% 
+             + 1}) %>%
+  mutate_at(.vars = c("latitude",
+                      "longitude"),
+            .funs = ~ char2dms(from = .,
+                               chd = "°",
+                               chm = "'",
+                               chs = "''") %>%
+              as.numeric()) %>%
+  mutate_at(.vars = c("collection_date_start",
+                      "collection_date_end"),
+            .funs = ~ parse_date_time(x = ., 
+                                      orders = c("bY",
+                                                 "Y"))
+            %>% as_date()) %>%
+  separate(col = genus_species,
+           into = c("genus",
+                    "species"),
+           sep = "\\s+",
+           remove = FALSE) %>%
+  mutate(genus = case_when(genus == "P." ~ "Poecilimon",
+                           genus == "I." ~ "Isophya"))
+
+article_authors_max_count <- meta_data_clean %>%
+  summarise(article_authors_max_count = max(article_authors_count)) %>%
+  pull()
+
+meta_data_clean <- meta_data_clean %>%
+  separate(col = article_authors,
+           into = str_c("author",
+                        1:article_authors_max_count),
+           sep = "(\\s+and\\s+|,\\s+)",
+           fill = "right") %>%
+  select(!c(experiments,
+            article_authors_count))
 
 # Write data --------------------------------------------------------------
 write_tsv(x = morphometric_data_clean,
@@ -106,3 +168,6 @@ write_tsv(x = morphometric_data_clean,
 
 write_tsv(x = physiological_data_clean,
           file = "data/02_physiological_data_clean.tsv")
+
+write_tsv(x = meta_data_clean,
+          file = "data/02_meta_data_clean.tsv")
