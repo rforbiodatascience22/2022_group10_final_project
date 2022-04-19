@@ -33,7 +33,8 @@ morphometric_data <- morphometric_data %>%
 
 # Clean column values
 morphometric_data_clean <- morphometric_data %>%
-  mutate_all(.funs = str_trim) %>%
+  mutate(across(.cols = everything(),
+                .fns = str_trim)) %>%
   mutate(sex = case_when(sex == "m" ~ "male",
                          sex == "f" ~ "female"),
          genus_species = {str_sub(string = genus,
@@ -45,7 +46,8 @@ morphometric_data_clean <- morphometric_data %>%
 ## Physiological data -----------------------------------------------------
 # Clean column values
 physiological_data_clean <- physiological_data %>%
-  mutate_all(.funs = str_trim) %>%
+  mutate(across(.cols = everything(),
+                .fns = str_trim)) %>%
   separate(col = genus_species,
            into = c("genus",
                     "species"),
@@ -83,7 +85,8 @@ meta_data_clean <- meta_data %>%
                            species_group),
                 .fns = ~ !is.na(.))) %>%
   fill(everything()) %>%
-  mutate_all(.funs = str_trim) %>%
+  mutate(across(.cols = everything(),
+                .fns = str_trim)) %>%
   extract(col = genus_species_article,
           into = c("genus_species",
                    "article_authors",
@@ -127,20 +130,20 @@ meta_data_clean <- meta_data %>%
                                  pattern = "(^|\\s+)P$"),
          article_authors_count = {article_authors %>% 
              str_count(pattern = "(\\s+and\\s+|,\\s+)") %>% 
-             + 1}) %>%
-  mutate_at(.vars = c("latitude",
-                      "longitude"),
-            .funs = ~ char2dms(from = .,
-                               chd = "°",
-                               chm = "'",
-                               chs = "''") %>%
-              as.numeric()) %>%
-  mutate_at(.vars = c("collection_date_start",
-                      "collection_date_end"),
-            .funs = ~ parse_date_time(x = ., 
-                                      orders = c("bY",
-                                                 "Y"))
-            %>% as_date()) %>%
+             + 1},
+         across(.cols = c(latitude,
+                          longitude),
+                .fns = ~ char2dms(from = .,
+                                  chd = "°",
+                                  chm = "'",
+                                  chs = "''") %>%
+                  as.numeric()),
+         across(.cols = c(collection_date_start,
+                          collection_date_end),
+                .fns = ~ parse_date_time(x = ., 
+                                         orders = c("bY",
+                                                    "Y"))
+                %>% as_date())) %>%
   separate(col = genus_species,
            into = c("genus",
                     "species"),
