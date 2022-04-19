@@ -60,6 +60,6 @@ tidy_extract_meta <- function(data,
 
 # Add captions as new columns
   body %>%
-    mutate(group = captions %>%
+    mutate(species_group = captions %>%
              pull(1))
 }

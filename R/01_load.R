@@ -19,9 +19,7 @@ meta_data_raw <- read_xls(path = "data/_raw/jeb12294-sup-0001-tables1.xls",
                           col_names = FALSE)
 
 # Wrangle data ------------------------------------------------------------
-
-## Wrangle physiological data ---------------------------------------------
-
+## Physiological data -----------------------------------------------------
 # Create table of coordinates of subtables that should be extracted
 physiological_coordinates <- tibble(body_top = c(3, 
                                                  3,
@@ -60,9 +58,7 @@ physiological_data <- physiological_coordinates %>%
                                              body_left = ..3,
                                              body_right = ..4))
 
-
-## Wrangle meta data ------------------------------------------------------
-
+## Meta data --------------------------------------------------------------
 # Create table of coordinates of subtables that should be extracted
 meta_coordinates <- tibble(body_top = c(3, 
                                         6,
@@ -85,10 +81,13 @@ meta_data <- meta_coordinates %>%
 
 # Write data --------------------------------------------------------------
 write_tsv(x = morphometric_data_raw,
-          file = "data/01_morphometric_data.tsv")
+          file = "data/01_morphometric_data.tsv",
+          na = "")
 
 write_tsv(x = physiological_data,
-          file = "data/01_physiological_data.tsv")
+          file = "data/01_physiological_data.tsv",
+          na = "")
 
 write_tsv(x = meta_data,
-          file = "data/01_meta_data.tsv")
+          file = "data/01_meta_data.tsv",
+          na = "")
