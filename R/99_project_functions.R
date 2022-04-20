@@ -1,31 +1,36 @@
 # Define project functions ------------------------------------------------
 tidy_extract_physiological <- function(data,
-                                        first_row,
-                                        first_column,
-                                        last_row,
-                                        last_column){
-  captions <- data %>%
-    select(first_column: (first_column + 1) ) %>%
-    slice(first_row)
-  
-  header <- data %>%
-    select((first_column + 1) :last_column) %>%
-    slice(first_row + 1) %>%
-    as.character() %>%
-    c("frequency",
-      .)
-  
+                                       body_top,
+                                       body_bottom,
+                                       body_left,
+                                       body_right) {
+# Extract table body
   body <- data %>%
-    select(first_column:last_column) %>%
-    slice( (first_row + 2) :last_row)
+    select(all_of(body_left):all_of(body_right)) %>%
+    slice(body_top:body_bottom)
   
+# Extract table header  
+  header <- data %>%
+    select((all_of(body_left) + 1) :all_of(body_right)) %>%
+    slice(body_top - 1) %>%
+    as.character() %>%
+    prepend("frequency")
+  
+# Extract table captions
+  captions <- data %>%
+    select(all_of(body_left): (all_of(body_left) + 1) ) %>%
+    slice(body_top - 2)
+  
+# Set column names
   colnames(body) <- header
-  
+
+# Lengthen the data
   body <- body %>%
     pivot_longer(cols = !frequency,
                  names_to = "cricket_id",
                  values_to = "auditory_threshold")
-  
+
+# Add captions as new columns
   body %>%
     mutate(genus_species = captions %>%
              pull(1),
@@ -34,26 +39,27 @@ tidy_extract_physiological <- function(data,
 }
 
 tidy_extract_meta <- function(data,
-                              first_row,
-                              first_column,
-                              last_row,
-                              last_column){
-  captions <- data %>%
-    select(first_column) %>%
-    slice(first_row)
+                              body_top,
+                              body_bottom) {
+# Extract table body
+  body <- data %>%
+    slice(body_top:body_bottom)
   
+# Extract table header
   header <- data %>%
-    select(1:6) %>%
     slice(1) %>%
     as.character()
-  
-  body <- data %>%
-    select(first_column:last_column) %>%
-    slice( (first_row + 1) :last_row)
-  
+
+# Extract table captions
+  captions <- data %>%
+    select(1) %>%
+    slice(body_top - 1)
+
+# Set column names
   colnames(body) <- header
-  
+
+# Add captions as new columns
   body %>%
-    mutate(group = captions %>%
+    mutate(species_group = captions %>%
              pull(1))
 }
