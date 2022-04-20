@@ -52,6 +52,7 @@ physiological_data_clean <- physiological_data %>%
                     "species"),
            sep = "\\s+",
            remove = FALSE) %>%
+  
   mutate(frequency = str_replace(string = frequency,
                                  pattern = "^(\\d+)\\s*kHz$",
                                  replacement = "\\1"),
