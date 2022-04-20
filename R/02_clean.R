@@ -1,17 +1,13 @@
 # Load libraries ----------------------------------------------------------
 library("tidyverse")
-<<<<<<< HEAD
 library("dplyr")
-=======
 library("sp")
 library("lubridate")
->>>>>>> 4a8571ea7755b8bbbbf674b95005bcdd2ca7a683
 
 # Define functions --------------------------------------------------------
 source(file = "R/99_project_functions.R")
 
 # Load data ---------------------------------------------------------------
-<<<<<<< HEAD
 my_data1 <- read_tsv(file = "data/01_morphometric_data")
 my_data2 <- read_tsv(file = "data/01_physiological_data")
 my_data3 <- read_tsv(file = "data/01_meta_data")
@@ -36,7 +32,6 @@ write_tsv(x = my_data_clean2,
 write_tsv(x = my_data_clean3,
           file = "data/02_metadata_cleaned.tsv")
 
-=======
 morphometric_data <- read_tsv(file = "data/01_morphometric_data.tsv",
                               na = "",
                               col_types = cols(.default = "c"))
@@ -196,4 +191,5 @@ write_tsv(x = physiological_data_clean,
 
 write_tsv(x = meta_data_clean,
           file = "data/02_meta_data_clean.tsv")
->>>>>>> 4a8571ea7755b8bbbbf674b95005bcdd2ca7a683
+
+
