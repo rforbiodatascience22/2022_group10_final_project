@@ -11,5 +11,6 @@ The following analyses has been conducted:
 
 Recreate the plots of the paper   
 Map of collection sites   
+Exploratory data analysis 
 ANCOVA   
 PCA   
