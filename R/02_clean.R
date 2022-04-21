@@ -1,6 +1,6 @@
 # Load libraries ----------------------------------------------------------
 library("tidyverse")
-library("sp")
+library("parzer")
 library("lubridate")
 
 # Define functions --------------------------------------------------------
@@ -109,13 +109,8 @@ meta_data_clean <- meta_data %>%
          article_authors_count = {article_authors %>% 
              str_count(pattern = "(\\s+and\\s+|,\\s+)") %>% 
              + 1},
-         across(.cols = c(latitude,
-                          longitude),
-                .fns = ~ char2dms(from = .,
-                                  chd = "°",
-                                  chm = "'",
-                                  chs = "''") %>%
-                  as.numeric()),
+         latitude = parse_lat(lat = latitude),
+         longitude = parse_lon(lon = longitude),
          across(.cols = c(collection_date_start,
                           collection_date_end),
                 .fns = ~ parse_date_time(x = ., 
