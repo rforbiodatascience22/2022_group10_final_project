@@ -35,24 +35,14 @@ morphometric_data_clean <- morphometric_data %>%
   mutate(across(.cols = everything(),
                 .fns = str_trim),
          sex = case_when(sex == "m" ~ "male",
-                         sex == "f" ~ "female"),
-         genus_species = {str_sub(string = genus,
-                                  start = 1,
-                                  end = 1) %>%
-             str_c(species,
-                   sep = ". ")})
+                         sex == "f" ~ "female"))
 
 ## Physiological data -----------------------------------------------------
 # Clean column values
 physiological_data_clean <- physiological_data %>%
   mutate(across(.cols = everything(),
-                .fns = str_trim)) %>%
-  separate(col = genus_species,
-           into = c("genus",
-                    "species"),
-           sep = "\\s+",
-           remove = FALSE) %>%
-  mutate(frequency = str_replace(string = frequency,
+                .fns = str_trim),
+         frequency = str_replace(string = frequency,
                                  pattern = "^(\\d+)\\s*kHz$",
                                  replacement = "\\1"),
          cricket_id = str_replace(string = cricket_id,
@@ -63,9 +53,7 @@ physiological_data_clean <- physiological_data %>%
                                           replacement = "\\1"),
          sex = str_replace(string = sex,
                            pattern = "^(male|female)\\s+individuals$",
-                           replacement = "\\1"),
-         genus = case_when(genus == "P." ~ "Poecilimon",
-                           genus == "I." ~ "Isophya"))
+                           replacement = "\\1"))
 
 ## Meta data --------------------------------------------------------------
 # Rename columns
@@ -132,8 +120,7 @@ meta_data_clean <- meta_data %>%
                           collection_date_end),
                 .fns = ~ parse_date_time(x = ., 
                                          orders = c("bY",
-                                                    "Y"))
-                %>% as_date())) %>%
+                                                    "Y")))) %>%
   separate(col = genus_species,
            into = c("genus",
                     "species"),
@@ -156,23 +143,22 @@ meta_data_clean <- meta_data_clean %>%
             article_authors_count))
 
 ## Join data --------------------------------------------------------------
-# Join morphometric data and meta data
+# Join morphometric data with meta data
 morphometric_data_clean <- meta_data_clean %>%
   filter(anatomy == TRUE) %>%
   left_join(x = morphometric_data_clean,
             y = .,
             by = c("genus",
-                   "species",
-                   "genus_species"))
+                   "species")) %>%
+  select(where(~sum(!is.na(.x)) > 0))
 
-# Join physiological data and meta data
+# Join physiological data with meta data
 physiological_data_clean <- meta_data_clean %>%
   filter(physiology == TRUE) %>%
   left_join(x = physiological_data_clean,
             y = .,
-            by = c("genus",
-                   "species",
-                   "genus_species"))
+            by = "genus_species") %>%
+  select(where(~sum(!is.na(.x)) > 0))
 
 # Write data --------------------------------------------------------------
 write_tsv(x = morphometric_data_clean,
