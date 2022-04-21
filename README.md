@@ -9,3 +9,8 @@ Finally we will use clustering and principal component analysis to make a model 
 
 The following analyses has been conducted:
 
+Recreate the plots of the paper   
+Map of collection sites   
+Exploratory data analysis 
+ANCOVA   
+PCA   
