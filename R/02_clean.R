@@ -115,7 +115,8 @@ meta_data_clean <- meta_data %>%
                           collection_date_end),
                 .fns = ~ parse_date_time(x = ., 
                                          orders = c("bY",
-                                                    "Y")))) %>%
+                                                    "Y")) %>%
+                  as_date())) %>%
   separate(col = genus_species,
            into = c("genus",
                     "species"),
