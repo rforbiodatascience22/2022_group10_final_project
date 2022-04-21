@@ -45,14 +45,18 @@ morphometric_data_summary <- morphometric_data %>%
 
 # Visualise data ----------------------------------------------------------
 morphometric_data_summary %>%
-  ggplot(mapping = aes(x = hind_femur_length_mean,
-                       y = tympana_anterior_proximo_distal_length_mean,
-                       color = plot_grouping,
-                       shape = sex)) +
-  geom_pointrange(mapping = aes(ymin = tympana_anterior_proximo_distal_length_low,
-                                ymax = tympana_anterior_proximo_distal_length_high)) +
-  geom_pointrange(mapping = aes(xmin = hind_femur_length_low,
-                                xmax = hind_femur_length_high))
+ggplot(mapping = aes(x = hind_femur_length_mean,
+                     y = tympana_anterior_proximo_distal_length_mean,
+                     color = plot_grouping,
+                     shape = sex)) +
+geom_pointrange(mapping = aes(ymin = tympana_anterior_proximo_distal_length_low,
+                              ymax = tympana_anterior_proximo_distal_length_high),
+                fill = "white") +
+geom_pointrange(mapping = aes(xmin = hind_femur_length_low,
+                              xmax = hind_femur_length_high),
+                fill = "white") +
+scale_shape_manual(values = c(21,
+                              19))
 
 # Write data --------------------------------------------------------------
 #write_tsv(...)
