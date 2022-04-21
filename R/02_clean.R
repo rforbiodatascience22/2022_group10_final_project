@@ -25,7 +25,7 @@ meta_data <- read_tsv(file = "data/01_meta_data.tsv",
 morphometric_data_clean <- morphometric_data %>%
   rename_with(.fn = ~ .x %>%
                 str_to_lower() %>%
-                str_replace_all(pattern = "\\s",
+                str_replace_all(pattern = "\\s|-",
                                 replacement = "_") %>%
                 str_replace(pattern = "\\[mm\\]$",
                             replacement = "length")) %>%
@@ -143,8 +143,8 @@ meta_data_clean <- meta_data %>%
                            genus == "I." ~ "Isophya"))
 
 article_authors_max_count <- meta_data_clean %>%
-  summarise(article_authors_max_count = max(article_authors_count)) %>%
-  pull()
+  pull(var = article_authors_count) %>%
+  max()
 
 meta_data_clean <- meta_data_clean %>%
   separate(col = article_authors,
@@ -155,12 +155,28 @@ meta_data_clean <- meta_data_clean %>%
   select(!c(`Anatomy, Neuroanatomy, Physiology`,
             article_authors_count))
 
+## Join data --------------------------------------------------------------
+# Join morphometric data and meta data
+morphometric_data_clean <- meta_data_clean %>%
+  filter(anatomy == TRUE) %>%
+  left_join(x = morphometric_data_clean,
+            y = .,
+            by = c("genus",
+                   "species",
+                   "genus_species"))
+
+# Join physiological data and meta data
+physiological_data_clean <- meta_data_clean %>%
+  filter(physiology == TRUE) %>%
+  left_join(x = physiological_data_clean,
+            y = .,
+            by = c("genus",
+                   "species",
+                   "genus_species"))
+
 # Write data --------------------------------------------------------------
 write_tsv(x = morphometric_data_clean,
           file = "data/02_morphometric_data_clean.tsv")
 
 write_tsv(x = physiological_data_clean,
           file = "data/02_physiological_data_clean.tsv")
-
-write_tsv(x = meta_data_clean,
-          file = "data/02_meta_data_clean.tsv")
