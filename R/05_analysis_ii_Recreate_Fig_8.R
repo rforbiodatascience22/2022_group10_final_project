@@ -1,6 +1,6 @@
 # Load libraries ----------------------------------------------------------
 library(tidyverse)
-library(plyr)
+library(dplyr)
 library(patchwork)
 
 # Define functions --------------------------------------------------------
@@ -11,19 +11,27 @@ phys_data <- read_tsv(file = "data/02_physiological_data_clean.tsv")
 
 # Wrangle data ------------------------------------------------------------
 
-### Code for fig 8 with means and sd 
-data_plot <- phys_data %>% group_by(frequency, sex, species) %>% 
+data_plot <- phys_data %>% 
+  group_by(frequency, sex, species) %>% 
   summarise(n = n(), 
             mean = mean(auditory_threshold,na.rm = TRUE), 
             sd = sd(auditory_threshold, na.rm = TRUE)) %>% 
   mutate(lower = mean - sd,
          upper = mean + sd)
+
+
+# Make plot
+
 data_plot %>% 
 ggplot(aes(x = frequency, 
            y = mean,
            color = sex)) +
   geom_point() + 
-  geom_pointrange(aes(ymin = lower, ymax = upper)) +
+  #geom_pointrange(aes(ymin = lower, ymax = upper)) +
+  geom_errorbar(aes(ymin=mean, ymax=upper), width=.2,
+                position=position_dodge(.9)) +
+  geom_errorbar(aes(ymin=lower, ymax=upper), width=.2,
+                position=position_dodge(.9)) +
   geom_line() + 
   facet_wrap(~species)
 
