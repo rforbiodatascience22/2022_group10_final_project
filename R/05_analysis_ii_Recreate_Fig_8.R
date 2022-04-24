@@ -18,6 +18,29 @@ Trendplot <- function(data,
   plot1 <- data %>% 
     group_by(sex) %>% 
     filter(species == species)
+
+### Code for fig 8 with means and sd 
+data_plot <- phys %>% group_by(frequency, sex, species) %>% 
+  summarise(n = n(), 
+            mean = mean(auditory_threshold,na.rm = TRUE), 
+            sd = sd(auditory_threshold, na.rm = TRUE)) %>% 
+  mutate(lower = mean - sd,
+         upper = mean + sd)
+data_plot %>% 
+ggplot(aes(x = frequency, 
+           y = mean,
+           color = sex)) +
+  geom_point() + 
+  geom_pointrange(aes(ymin = lower, ymax = upper)) +
+  geom_line() + 
+  facet_wrap(~species)
+
+phys_data %>% 
+  view(cricket_id)
+
+plot1 <- phys_data %>% 
+  group_by(sex) %>% 
+  filter(species == "ornatus") %>% 
   
   #Object for female trend line
   plot2 <- data %>% 
