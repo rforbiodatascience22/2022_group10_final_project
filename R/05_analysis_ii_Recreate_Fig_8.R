@@ -6,10 +6,38 @@ source(file = "R/99_project_functions.R")
 
 # Load data ---------------------------------------------------------------
 phys_data <- read_tsv(file = "data/02_physiological_data_clean.tsv")
+phys <- read_tsv("data/02_physiological_data_clean.tsv")
+
 
 view(phys_data)
 
 # Wrangle data ------------------------------------------------------------
+
+
+### Code for fig 8 with means and sd 
+data_plot <- phys %>% group_by(frequency, sex, species) %>% 
+  summarise(n = n(), 
+            mean = mean(auditory_threshold,na.rm = TRUE), 
+            sd = sd(auditory_threshold, na.rm = TRUE)) %>% 
+  mutate(lower = mean - sd,
+         upper = mean + sd)
+data_plot %>% 
+ggplot(aes(x = frequency, 
+           y = mean,
+           color = sex)) +
+  geom_point() + 
+  geom_pointrange(aes(ymin = lower, ymax = upper)) +
+  geom_line() + 
+  facet_wrap(~species)
+
+
+
+
+
+
+
+
+
 
 #phys_data <- 
 phys_data %>% 
