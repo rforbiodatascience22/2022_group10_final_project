@@ -1,5 +1,5 @@
 # Load libraries ----------------------------------------------------------
-library("tidyverse")
+library(tidyverse)
 library(plyr)
 library(patchwork)
 
@@ -11,16 +11,8 @@ phys_data <- read_tsv(file = "data/02_physiological_data_clean.tsv")
 
 # Wrangle data ------------------------------------------------------------
 
-Trendplot <- function(data,
-                      species,
-                      title) {
-  #Object for data points
-  plot1 <- data %>% 
-    group_by(sex) %>% 
-    filter(species == species)
-
 ### Code for fig 8 with means and sd 
-data_plot <- phys %>% group_by(frequency, sex, species) %>% 
+data_plot <- phys_data %>% group_by(frequency, sex, species) %>% 
   summarise(n = n(), 
             mean = mean(auditory_threshold,na.rm = TRUE), 
             sd = sd(auditory_threshold, na.rm = TRUE)) %>% 
@@ -35,12 +27,13 @@ ggplot(aes(x = frequency,
   geom_line() + 
   facet_wrap(~species)
 
-phys_data %>% 
-  view(cricket_id)
-
-plot1 <- phys_data %>% 
-  group_by(sex) %>% 
-  filter(species == "ornatus") %>% 
+Trendplot <- function(data,
+                      species,
+                      title) {
+  #Object for data points
+  plot1 <- data %>% 
+    group_by(sex) %>% 
+    filter(species == species)
   
   #Object for female trend line
   plot2 <- data %>% 
