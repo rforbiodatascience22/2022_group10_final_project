@@ -73,7 +73,7 @@ Fig8plot <- function(data,
                        # Wrangle data ------------------------------------------------------------
                      
                      group_by(frequency, sex) %>%
-                       filter(species == species) %>% 
+                       filter(species == Species) %>% 
                        summarise(n = n(),
                                  mean = mean(auditory_threshold,na.rm = TRUE),
                                  sd = sd(auditory_threshold, na.rm = TRUE)) %>%
@@ -92,3 +92,5 @@ Fig8plot <- function(data,
                        xlab("Frequency [KHz]") +
                        ylab("Auditory threshold \n [dB SPL]")
 }
+
+                    
