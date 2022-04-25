@@ -16,14 +16,10 @@ map_data_specie_count <- map_data %>%
   group_by(genus_species) %>% 
   tally
 
-world_map <- map_data("world")
+map_data <- map_data %>% 
+  left_join(map_data_specie_count) %>% 
+  distinct()
 
-eu <- c("Austria","Belgium","Bulgaria","Croatia","Cyprus",
-        "Czech Rep.","Denmark","Estonia","Finland","France",
-        "Germany","Greece","Hungary","Ireland","Italy","Latvia",
-        "Lithuania","Luxembourg","Malta","Netherlands","Poland",
-        "Portugal","Romania","Slovakia","Slovenia","Spain",
-        "Sweden","United Kingdom")
 
 eu_map <- world_map %>% 
   as_tibble() %>%  
@@ -49,7 +45,7 @@ world_map %>%
   ylim(c(30,70))
 
 theworld <- spData::world %>% filter(region_un == "Europe")
-
+view(theworld)
 ggplot(theworld) +
   geom_sf(color = "gray",
           fill = "lightgreen",
