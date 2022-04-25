@@ -28,10 +28,9 @@ ggplot(aes(x = frequency,
            color = sex)) +
   geom_point() + 
   #geom_pointrange(aes(ymin = lower, ymax = upper)) +
-  geom_errorbar(aes(ymin=mean, ymax=upper), width=.2,
-                position=position_dodge(.9)) +
   geom_errorbar(aes(ymin=lower, ymax=upper), width=.2,
                 position=position_dodge(.9)) +
+
   geom_line() + 
   facet_wrap(~species)
 
