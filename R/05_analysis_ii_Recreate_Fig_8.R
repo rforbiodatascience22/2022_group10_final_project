@@ -11,13 +11,15 @@ phys_data <- read_tsv(file = "data/02_physiological_data_clean.tsv")
 
 # Wrangle data ------------------------------------------------------------
 
-data_plot <- phys_data %>% 
-  group_by(frequency, sex, species) %>% 
-  summarise(n = n(), 
-            mean = mean(auditory_threshold,na.rm = TRUE), 
-            sd = sd(auditory_threshold, na.rm = TRUE)) %>% 
-  mutate(lower = mean - sd,
-         upper = mean + sd)
+Trendplot <- function(data,
+                      species,
+                      title) {data_plot <- phys_data %>%
+                        group_by(frequency, sex, species) %>%
+                        summarise(n = n(),
+                                  mean = mean(auditory_threshold,na.rm = TRUE),
+                                  sd = sd(auditory_threshold, na.rm = TRUE)) %>%
+                        mutate(lower = mean - sd,
+                               upper = mean + sd)
 
 
 # Make plot
