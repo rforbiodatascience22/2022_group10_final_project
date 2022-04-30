@@ -31,37 +31,33 @@ morphometric_data <- morphometric_data %>%
                                           TRUE ~ as.character(species_group)) %>%
       as_factor()})
 
-morphometric_summaries <- list(morphometric_data %>%
-                                 group_by(genus_species,
-                                          sex,
-                                          communication_group),
-                               morphometric_data %>%
-                                 group_by(genus_species,
-                                          communication_group)) %>%
-  map(.f = ~ .x %>%
-        summarise(across(.cols = c(tympana_anterior_proximo_distal_length,
-                                   hind_femur_length,
-                                   spiracle_length,
-                                   sensillae_count),
-                         .fns = list(mean = ~ mean(x = .x,
-                                                   na.rm = TRUE),
-                                     low = ~ mean(x = .x,
-                                                  na.rm = TRUE) - sd(x = .x,
-                                                                     na.rm = TRUE),
-                                     high = ~ mean(x = .x,
-                                                   na.rm = TRUE) + sd(x = .x,
-                                                                      na.rm = TRUE)))))
+
+morphometric_summary <- morphometric_data %>%
+  group_by(genus_species,
+           sex,
+           communication_group) %>%
+  summarise(across(.cols = c(tympana_anterior_proximo_distal_length,
+                             hind_femur_length,
+                             spiracle_length,
+                             sensillae_count),
+                   .fns = list(mean = ~ mean(x = .x,
+                                             na.rm = TRUE),
+                               low = ~ mean(x = .x,
+                                            na.rm = TRUE) - sd(x = .x,
+                                                               na.rm = TRUE),
+                               high = ~ mean(x = .x,
+                                             na.rm = TRUE) + sd(x = .x,
+                                                                na.rm = TRUE))))
 
 # Model data --------------------------------------------------------------
-lm_models <- morphometric_summaries %>%
-  pluck(1) %>%
+lm_models <- morphometric_summary %>%
   filter(communication_group == "Poecilimon bi-directional") %>%
   group_by(sex,
            communication_group) %>%
   nest() %>%
-  bind_rows(morphometric_summaries %>%
-              pluck(2) %>%
-              filter(communication_group == "Poecilimon bi-directional") %>%
+  bind_rows(morphometric_summary %>%
+              filter(sex == "female",
+                     communication_group == "Poecilimon bi-directional") %>%
               group_by(communication_group) %>%
               nest()) %>%
   mutate(formula = ifelse(test = is.na(sex),
@@ -96,13 +92,11 @@ lm_models_glance <- lm_models %>%
   unnest(model_glance)
 
 # Visualise data ----------------------------------------------------------
-color_groups_count <- morphometric_summaries %>%
-  pluck(1) %>%
+color_groups_count <- morphometric_summary %>%
   pull(communication_group) %>%
   nlevels()
 
-color_groups_names <- morphometric_summaries %>%
-  pluck(1) %>%
+color_groups_names <- morphometric_summary %>%
   pull(communication_group) %>%
   levels()
 
@@ -148,14 +142,11 @@ r_squared_spiracle_femur_female <- lm_models_glance %>%
   pluck("r.squared") %>%
   round(3)
 
-plotting_table <- tibble(data = list(morphometric_summaries %>%
-                                       pluck(1),
-                                     morphometric_summaries %>%
-                                       pluck(1),
-                                     morphometric_summaries %>%
-                                       pluck(1),
-                                     morphometric_summaries %>%
-                                       pluck(2)),
+plotting_table <- tibble(data = list(morphometric_summary,
+                                     morphometric_summary,
+                                     morphometric_summary,
+                                     morphometric_summary %>%
+                                       filter(sex == "female")),
                          x = c("hind_femur_length",
                                "hind_femur_length",
                                "tympana_anterior_proximo_distal_length",
@@ -206,8 +197,8 @@ plotting_table <- tibble(data = list(morphometric_summaries %>%
                                              The line represents equal lengths
                                              for both hearing structures",
                                              
-                                             ". \n\n A regression line is
-                                             calculated for bidirectional
+                                             " for females. \n\n A regression
+                                             line is calculated for bidirectional
                                              ${colored_name_poecilimon} species
                                              (R<sup>2</sup> =
                                              ${r_squared_sensillae_femur})" %>% 
