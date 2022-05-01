@@ -210,7 +210,7 @@ plotting_table <- plotting_table %>%
                           x,
                           sep = "_vs_"),
          plot = pmap(.l = plotting_table,
-                     .f = ~ plot_scatter(data = ..1,
+                     .f = ~ plot_mean_scatter(data = ..1,
                                          x = ..2,
                                          y = ..3,
                                          color = "communication_group",

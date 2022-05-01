@@ -64,7 +64,7 @@ tidy_extract_meta <- function(data,
              pull(1))
 }
 
-plot_scatter <- function(data,
+plot_mean_scatter <- function(data,
                          x,
                          y,
                          color,
@@ -76,7 +76,7 @@ plot_scatter <- function(data,
                          subtitle_end = NULL,
                          color_palette
                          ) {
-  scatter_plot <- data %>%
+  mean_scatter_plot <- data %>%
     ggplot(mapping = aes_string(x = str_c(x,
                                           "_mean"),
                                 y = str_c(y,
@@ -107,10 +107,10 @@ plot_scatter <- function(data,
           axis.title = element_blank())
   
   if(!is.null(shape)) {
-    scatter_plot <- scatter_plot +
+    mean_scatter_plot <- mean_scatter_plot +
       scale_shape_manual(values = c(21,
                                     19))
   }
   
-  scatter_plot
+  mean_scatter_plot
 }
