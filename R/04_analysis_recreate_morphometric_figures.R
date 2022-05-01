@@ -55,15 +55,16 @@ lm_models <- morphometric_summary %>%
   group_by(sex,
            communication_group) %>%
   nest() %>%
+  mutate(formula = "spiracle_length_mean ~ hind_femur_length_mean") %>%
   bind_rows(morphometric_summary %>%
               filter(sex == "female",
                      communication_group == "Poecilimon bi-directional") %>%
-              group_by(communication_group) %>%
-              nest()) %>%
-  mutate(formula = ifelse(test = is.na(sex),
-                          yes = "sensillae_count_mean ~ hind_femur_length_mean",
-                          no = "spiracle_length_mean ~ hind_femur_length_mean"),
-         model = map(.x = data,
+              group_by(sex,
+                       communication_group) %>%
+              nest() %>% 
+              mutate(formula = "sensillae_count_mean ~ hind_femur_length_mean")) %>%
+  ungroup() %>%
+  mutate(model = map(.x = data,
                      .f = ~ lm(formula = formula,
                                data = .x)),
          model_tidy = map(.x = model,
