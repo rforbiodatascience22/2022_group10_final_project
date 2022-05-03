@@ -15,7 +15,12 @@ plot2 <- Fig8plot(phys_data,"modestior","Isophya modestior")
 plot3 <- Fig8plot(phys_data,"elegans","Poecilimon elegans")
 plot4 <- Fig8plot(phys_data,"ampliatus","Poecilimon ampliatus")
 
-(plot1 + plot2) / (plot3 + plot4)
+p <- (plot1 + plot2) / (plot3 + plot4)
 # Write data --------------------------------------------------------------
-write_tsv(...)
-ggsave(...)
+ggsave(filename = "05_auditory_threshold_vs_frequency_plot.pdf",
+       plot = p,
+       device = cairo_pdf,
+       path = "data/images/",
+       width = 27,
+       height = 20,
+       units = "cm")
