@@ -63,3 +63,54 @@ tidy_extract_meta <- function(data,
     mutate(species_group = captions %>%
              pull(1))
 }
+
+plot_mean_scatter <- function(data,
+                         x,
+                         y,
+                         color,
+                         shape = NULL,
+                         title,
+                         y_text,
+                         x_text,
+                         subtitle_main,
+                         subtitle_end = NULL,
+                         color_palette
+                         ) {
+  mean_scatter_plot <- data %>%
+    ggplot(mapping = aes_string(x = str_c(x,
+                                          "_mean"),
+                                y = str_c(y,
+                                          "_mean"),
+                                color = color,
+                                shape = shape)) +
+    geom_pointrange(mapping = aes_string(ymin = str_c(y,
+                                                      "_low"),
+                                         ymax = str_c(y,
+                                                      "_high")),
+                    fill = "white") +
+    geom_pointrange(mapping = aes_string(xmin = str_c(x,
+                                                      "_low"),
+                                         xmax = str_c(x,
+                                                      "_high")),
+                    fill = "white") +
+    scale_color_manual(values = color_palette) +
+    labs(title = title,
+         subtitle = str_c(y_text,
+                          " vs ",
+                          x_text,
+                          subtitle_main,
+                          subtitle_end)) +
+    theme(plot.title = element_markdown(face = "bold"),
+          plot.subtitle = element_markdown(),
+          plot.title.position = "plot",
+          legend.position = "none",
+          axis.title = element_blank())
+  
+  if(!is.null(shape)) {
+    mean_scatter_plot <- mean_scatter_plot +
+      scale_shape_manual(values = c(21,
+                                    19))
+  }
+  
+  mean_scatter_plot
+}
