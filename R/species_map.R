@@ -50,7 +50,7 @@ world_map %>%
 
 theworld <- spData::world %>% filter(region_un == "Europe")
 
-ggplot(theworld) +
+p <- ggplot(theworld) +
   geom_sf(color = "gray",
           fill = "lightgreen",
           alpha = 0.5) + 
@@ -67,4 +67,11 @@ ggplot(theworld) +
                            label = genus_species),
              max.overlaps = Inf) + 
   theme(panel.background = element_rect(fill = "aliceblue"))
-map_data %>% view()
+
+ggsave(filename = "06_map_plot.pdf",
+       plot = p,
+       device = cairo_pdf,
+       path = "data/images/",
+       width = 27,
+       height = 20,
+       units = "cm")
