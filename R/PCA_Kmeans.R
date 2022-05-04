@@ -190,29 +190,30 @@ augmented_morpho %>%
 
 ### Scree Plot
 
-insect_pca %>% 
-  tidy(matrix = "eigenvalues") %>%
-  ggplot(mapping = aes(x = as_factor(PC),
-                       y = percent,
-                       label = str_c(round(cumulative, 
-                                           2)*100,
-                                     "%"))) +
-  geom_col(fill = "#00abaf",
-           alpha = 0.9) +
-  geom_text(vjust = -.5,
-            fontface = "bold",
-            ) +
-  scale_y_continuous(labels = scales::label_percent(),
-                     breaks = seq(0,1,
-                                  by = 0.1),
-                     expand = expansion(mult = c(0,0.1))) +
-  scale_x_discrete(labels = str_c("PC",1:7)) +
-  labs(title = "Variance explained by principal components.",
-       subtitle = "Percentage and **cumulative** percent
-       of variability explained by each principal component") +
-  theme(axis.title = element_blank(),
-        plot.title = element_markdown(face = "bold"),
-        plot.subtitle = element_markdown()) 
+scree_plot <- 
+  insect_pca %>% 
+    tidy(matrix = "eigenvalues") %>%
+    ggplot(mapping = aes(x = as_factor(PC),
+                         y = percent,
+                         label = str_c(round(cumulative, 
+                                             2)*100,
+                                       "%"))) +
+    geom_col(fill = "#00abaf",
+             alpha = 0.9) +
+    geom_text(vjust = -.5,
+              fontface = "bold",
+              ) +
+    scale_y_continuous(labels = scales::label_percent(),
+                       breaks = seq(0,1,
+                                    by = 0.1),
+                       expand = expansion(mult = c(0,0.1))) +
+    scale_x_discrete(labels = str_c("PC",1:7)) +
+    labs(title = "Variance explained by principal components.",
+         subtitle = "Percentage and **cumulative** percent
+         of variability explained by each principal component") +
+    theme(axis.title = element_blank(),
+          plot.title = element_markdown(face = "bold"),
+          plot.subtitle = element_markdown()) 
   
 
 
@@ -247,6 +248,23 @@ kmeans_all %>%
 
 
 
+
+### export plots
+
+plots <- list(contribution_plot,
+              scree_plot,
+              biplot)
+
+walk(.x = plots,
+      .f = ~ggsave(filename = str_c("05_",
+                                    .x,
+                                    "_plot.pdf"),
+                   plot = .x,
+                   device = cairo_pdf,
+                   path = "data/images/",
+                   width = 27,
+                   height = 20,
+                   units = "cm"))
 
 
 
