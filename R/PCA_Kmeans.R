@@ -251,20 +251,19 @@ kmeans_all %>%
 
 ### export plots
 
-plots <- list(contribution_plot,
-              scree_plot,
-              biplot)
+plots <- list("contribution_plot" = contribution_plot,
+              "scree_plot" = scree_plot,
+              "biplot" = biplot)
 
-walk(.x = plots,
-      .f = ~ggsave(filename = str_c("05_",
-                                    .x,
+walk2(.x = plots,
+     .y = names(plots),
+      .f = ~ ggsave(filename = str_c("05_",
+                                    .y,
                                     "_plot.pdf"),
                    plot = .x,
                    device = cairo_pdf,
-                   path = "data/images/",
+                   path = "data/results/",
                    width = 27,
                    height = 20,
                    units = "cm"))
-
-
 
