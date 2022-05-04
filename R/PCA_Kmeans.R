@@ -72,22 +72,26 @@ colors <- colors %>%
           .y = names(colors),
           .f = ~glue("<span style='color:{.x};'>{.y}</span>"))
 
-
-condition = case_when((str_length(df_test$column) >= 30 & 
-                         str_detect(df_test$column,"PC1")) ~ 1.1,
-                      str_length(df_test$column) <= 23 & 
-                        str_detect(df_test$column,"PC1") ~ 1.1,
-                      str_length(df_test$column) >= 30 & 
-                        str_detect(df_test$column,"PC2") ~ -0.1,
-                      str_length(df_test$column) <= 23 & 
-                        str_detect(df_test$column,"PC2") ~ 1.1)
-
-contribution_plot <- 
-  pca_values %>% 
+contribution_data <-
+    pca_values %>% 
     filter(PC %in% c("PC1", "PC2")) %>% 
     group_by(PC) %>% 
     ungroup() %>% 
-    mutate(column = reorder_within(column, abs(value), PC)) %>% 
+    mutate(column = reorder_within(column, abs(value), PC)) 
+
+label_data <- pull(contribution_data, column)
+
+condition = case_when((str_length(label_data) >= 30 & 
+                         str_detect(label_data,"PC1")) ~ 1.1,
+                      str_length(label_data) <= 23 & 
+                        str_detect(label_data,"PC1") ~ 1.1,
+                      str_length(label_data) >= 30 & 
+                        str_detect(label_data,"PC2") ~ -0.1,
+                      str_length(label_data) <= 23 & 
+                        str_detect(label_data,"PC2") ~ 1.1)
+
+contribution_plot <- 
+  contribution_data %>% 
     ggplot(mapping = aes(x = abs(value),
                          y = column,
                          label = str_remove(column, "__.+"),
@@ -100,6 +104,7 @@ contribution_plot <-
                scales = "free") +
     scale_y_discrete(labels = function(x) str_remove(string = x,
                                                      pattern = "__.+")) +
+    scale_x_continuous(expand = expansion(mult = c(0,0.1))) +
     labs(title = "Contribution of insect data features to first two principal components.",
            subtitle = glue("Absolute contribution of the {pluck(colors,'positive')} and
                            {pluck(colors,'negative')} features.")) +
@@ -187,11 +192,29 @@ augmented_morpho %>%
 
 insect_pca %>% 
   tidy(matrix = "eigenvalues") %>%
-  ggplot(mapping = aes(x = PC,
+  ggplot(mapping = aes(x = as_factor(PC),
                        y = percent,
-                       label = round(cumulative, 2))) +
-  geom_col() +
-  geom_text(vjust = -.5) 
+                       label = str_c(round(cumulative, 
+                                           2)*100,
+                                     "%"))) +
+  geom_col(fill = "#00abaf",
+           alpha = 0.9) +
+  geom_text(vjust = -.5,
+            fontface = "bold",
+            ) +
+  scale_y_continuous(labels = scales::label_percent(),
+                     breaks = seq(0,1,
+                                  by = 0.1),
+                     expand = expansion(mult = c(0,0.1))) +
+  scale_x_discrete(labels = str_c("PC",1:7)) +
+  labs(title = "Variance explained by principal components.",
+       subtitle = "Percentage and **cumulative** percent
+       of variability explained by each principal component") +
+  theme(axis.title = element_blank(),
+        plot.title = element_markdown(face = "bold"),
+        plot.subtitle = element_markdown()) 
+  
+
 
 
 ### K-cluster
@@ -221,22 +244,7 @@ kmeans_all %>%
   ggforce::geom_mark_hull(aes(fill = .cluster,
                               group = .cluster)) +
   facet_wrap(vars(k))
-  
 
-r_squared_sensillae_femur = "bam bam"
-colored_name_poecilimon = "sup"
-
-glue("for females. \n\n A regression
-line is calculated for bidirectional
-{colored_name_poecilimon} species
-(R<sup>2</sup> = {r_squared_sensillae_femur})" )
-
-
-df_test <- pca_values %>% 
-  filter(PC %in% c("PC1", "PC2")) %>% 
-  group_by(PC) %>% 
-  ungroup() %>% 
-  mutate(column = reorder_within(column, abs(value), PC))
 
 
 
