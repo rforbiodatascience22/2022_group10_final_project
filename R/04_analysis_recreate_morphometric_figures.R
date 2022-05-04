@@ -26,12 +26,15 @@ morphometric_data <- read_tsv(file = "data/02_morphometric_data_clean.tsv",
                                                communication_system = "f"))
 
 # Wrangle data ------------------------------------------------------------
+# Create new grouping "communication group" based on communication system,
+# genus and species group
 morphometric_data <- morphometric_data %>%
   mutate(communication_group = {case_when(genus == "Poecilimon" & communication_system == "bi-directional" ~ "Poecilimon bi-directional",
                                           TRUE ~ as.character(species_group)) %>%
       as_factor()})
 
-
+# Calculate species means +-sd for both sexes for selected morphometric
+# variables
 morphometric_summary <- morphometric_data %>%
   group_by(genus_species,
            sex,
@@ -50,6 +53,8 @@ morphometric_summary <- morphometric_data %>%
                                                                 na.rm = TRUE))))
 
 # Model data --------------------------------------------------------------
+# Create linear models for bi-directional Poecilimon species grouped by sex and
+# for selected variables
 lm_models <- morphometric_summary %>%
   filter(communication_group == "Poecilimon bi-directional") %>%
   group_by(sex,
@@ -72,6 +77,8 @@ lm_models <- morphometric_summary %>%
          model_glance = map(.x = model,
                                .f = glance))
 
+# Extract table from fitted linear models with info about the statistical
+# findings (coefficients etc.)
 lm_models_tidy <- lm_models %>%
   ungroup() %>%
   select(sex,
@@ -85,6 +92,8 @@ lm_models_tidy <- lm_models %>%
               names_from = term,
               values_from = estimate)
 
+# Extract table from fitted linear models with summaries of the models
+# (R^2 etc.)
 lm_models_glance <- lm_models %>%
   select(sex,
          communication_group,
