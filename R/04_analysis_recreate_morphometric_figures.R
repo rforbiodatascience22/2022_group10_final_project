@@ -102,6 +102,7 @@ lm_models_glance <- lm_models %>%
   unnest(model_glance)
 
 # Visualise data ----------------------------------------------------------
+# Create color palette
 color_groups_count <- morphometric_summary %>%
   pull(communication_group) %>%
   nlevels()
@@ -113,7 +114,7 @@ color_groups_names <- morphometric_summary %>%
 color_palette <- scales::hue_pal()(color_groups_count) %>%
   set_names(color_groups_names)
 
-
+# Create colored names for each communication group
 colored_name_modestior <- color_palette %>%
   glue_data("<span style='color:{costata};'>I. modestior</span>")
 
@@ -127,7 +128,7 @@ colored_name_propinquus <- color_palette %>%
 colored_name_ampliatus <- color_palette %>%
   glue_data("<span style='color:{ampliatus};'>P. ampliatus</span>")
 
-
+# Define plot subtitle
 subtitle_main <- " for the bidirectional outgroup species
   ${colored_name_modestior}, the bidirectional ${colored_name_poecilimon}
   species, \n\n the unidirectional species of the ${colored_name_propinquus}
@@ -135,6 +136,7 @@ subtitle_main <- " for the bidirectional outgroup species
   species means ±SD" %>%
   str_interp()
 
+# Extract R^2 values from linear models
 r_squared_sensillae_femur <- lm_models_glance %>%
   filter(formula == "sensillae_count_mean ~ hind_femur_length_mean") %>%
   pluck("r.squared") %>%
@@ -152,6 +154,7 @@ r_squared_spiracle_femur_female <- lm_models_glance %>%
   pluck("r.squared") %>%
   round(3)
 
+# Create table with parameters for the different morphometric plots
 plotting_table <- tibble(data = list(morphometric_summary,
                                      morphometric_summary,
                                      morphometric_summary,
@@ -214,6 +217,8 @@ plotting_table <- tibble(data = list(morphometric_summary,
                                              ${r_squared_sensillae_femur})" %>% 
                                                str_interp()))
 
+# Create the different morphometric plots. First make general basis plots then
+# specialize the plots
 plotting_table <- plotting_table %>%
   mutate(filename = str_c(y,
                           x,
