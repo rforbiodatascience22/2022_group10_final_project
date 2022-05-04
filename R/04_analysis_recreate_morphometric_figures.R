@@ -26,12 +26,15 @@ morphometric_data <- read_tsv(file = "data/02_morphometric_data_clean.tsv",
                                                communication_system = "f"))
 
 # Wrangle data ------------------------------------------------------------
+# Create new grouping "communication group" based on communication system,
+# genus and species group
 morphometric_data <- morphometric_data %>%
   mutate(communication_group = {case_when(genus == "Poecilimon" & communication_system == "bi-directional" ~ "Poecilimon bi-directional",
                                           TRUE ~ as.character(species_group)) %>%
       as_factor()})
 
-
+# Calculate species means +-sd for both sexes for selected morphometric
+# variables
 morphometric_summary <- morphometric_data %>%
   group_by(genus_species,
            sex,
@@ -50,6 +53,8 @@ morphometric_summary <- morphometric_data %>%
                                                                 na.rm = TRUE))))
 
 # Model data --------------------------------------------------------------
+# Create linear models for bi-directional Poecilimon species grouped by sex and
+# for selected variables
 lm_models <- morphometric_summary %>%
   filter(communication_group == "Poecilimon bi-directional") %>%
   group_by(sex,
@@ -72,6 +77,8 @@ lm_models <- morphometric_summary %>%
          model_glance = map(.x = model,
                                .f = glance))
 
+# Extract table from fitted linear models with info about the statistical
+# findings (coefficients etc.)
 lm_models_tidy <- lm_models %>%
   ungroup() %>%
   select(sex,
@@ -85,6 +92,8 @@ lm_models_tidy <- lm_models %>%
               names_from = term,
               values_from = estimate)
 
+# Extract table from fitted linear models with summaries of the models
+# (R^2 etc.)
 lm_models_glance <- lm_models %>%
   select(sex,
          communication_group,
@@ -93,6 +102,7 @@ lm_models_glance <- lm_models %>%
   unnest(model_glance)
 
 # Visualise data ----------------------------------------------------------
+# Create color palette
 color_groups_count <- morphometric_summary %>%
   pull(communication_group) %>%
   nlevels()
@@ -104,7 +114,7 @@ color_groups_names <- morphometric_summary %>%
 color_palette <- scales::hue_pal()(color_groups_count) %>%
   set_names(color_groups_names)
 
-
+# Create colored names for each communication group
 colored_name_modestior <- color_palette %>%
   glue_data("<span style='color:{costata};'>I. modestior</span>")
 
@@ -118,7 +128,7 @@ colored_name_propinquus <- color_palette %>%
 colored_name_ampliatus <- color_palette %>%
   glue_data("<span style='color:{ampliatus};'>P. ampliatus</span>")
 
-
+# Define plot subtitle
 subtitle_main <- " for the bidirectional outgroup species
   ${colored_name_modestior}, the bidirectional ${colored_name_poecilimon}
   species, \n\n the unidirectional species of the ${colored_name_propinquus}
@@ -126,6 +136,7 @@ subtitle_main <- " for the bidirectional outgroup species
   species means ±SD" %>%
   str_interp()
 
+# Extract R^2 values from linear models
 r_squared_sensillae_femur <- lm_models_glance %>%
   filter(formula == "sensillae_count_mean ~ hind_femur_length_mean") %>%
   pluck("r.squared") %>%
@@ -143,6 +154,7 @@ r_squared_spiracle_femur_female <- lm_models_glance %>%
   pluck("r.squared") %>%
   round(3)
 
+# Create table with parameters for the different morphometric plots
 plotting_table <- tibble(data = list(morphometric_summary,
                                      morphometric_summary,
                                      morphometric_summary,
@@ -205,6 +217,8 @@ plotting_table <- tibble(data = list(morphometric_summary,
                                              ${r_squared_sensillae_femur})" %>% 
                                                str_interp()))
 
+# Create the different morphometric plots. First make general basis plots then
+# specialize the plots
 plotting_table <- plotting_table %>%
   mutate(filename = str_c(y,
                           x,
@@ -254,6 +268,8 @@ plotting_table <- plotting_table %>%
                                          box.padding = 1)))
 
 # Write data --------------------------------------------------------------
+dir.create(path = "data/images")
+
 plotting_table %>%
   pwalk(.f = ~ ggsave(filename = str_c("04_",
                                        ..9,
