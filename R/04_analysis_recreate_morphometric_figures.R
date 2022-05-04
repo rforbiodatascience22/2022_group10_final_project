@@ -263,6 +263,8 @@ plotting_table <- plotting_table %>%
                                          box.padding = 1)))
 
 # Write data --------------------------------------------------------------
+dir.create(path = "data/images")
+
 plotting_table %>%
   pwalk(.f = ~ ggsave(filename = str_c("04_",
                                        ..9,
