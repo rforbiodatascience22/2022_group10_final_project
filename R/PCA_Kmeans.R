@@ -39,7 +39,7 @@ morphometric_data_numeric <-
 # Model data --------------------------------------------------------------
 
 insect_pca <- 
-  morphometric_data_test %>% 
+  morphometric_data_numeric %>% 
   prcomp(scale = TRUE, 
          center = TRUE)
 
@@ -73,6 +73,15 @@ colors <- colors %>%
           .f = ~glue("<span style='color:{.x};'>{.y}</span>"))
 
 
+condition = case_when((str_length(df_test$column) >= 30 & 
+                         str_detect(df_test$column,"PC1")) ~ 1.1,
+                      str_length(df_test$column) <= 23 & 
+                        str_detect(df_test$column,"PC1") ~ 1.1,
+                      str_length(df_test$column) >= 30 & 
+                        str_detect(df_test$column,"PC2") ~ -0.1,
+                      str_length(df_test$column) <= 23 & 
+                        str_detect(df_test$column,"PC2") ~ 1.1)
+
 contribution_plot <- 
   pca_values %>% 
     filter(PC %in% c("PC1", "PC2")) %>% 
@@ -81,11 +90,14 @@ contribution_plot <-
     mutate(column = reorder_within(column, abs(value), PC)) %>% 
     ggplot(mapping = aes(x = abs(value),
                          y = column,
-                         label = column,
+                         label = str_remove(column, "__.+"),
                          fill = value < 0)) +
     geom_col(show.legend = FALSE) +
-    geom_label(size = condition) +
-    facet_wrap(vars(PC),scales = "free") +
+    geom_text(hjust = condition, 
+              size = 3,
+              fontface = "bold") +
+    facet_wrap(vars(PC),
+               scales = "free") +
     scale_y_discrete(labels = function(x) str_remove(string = x,
                                                      pattern = "__.+")) +
     labs(title = "Contribution of insect data features to first two principal components.",
@@ -95,7 +107,8 @@ contribution_plot <-
           plot.title.position = "plot",
           plot.subtitle = element_markdown(),
           axis.title = element_blank(),
-          axis.text.y = element_text())
+          axis.text = element_blank(),
+          axis.ticks = element_blank())
   
   
  ## PCA Plot -----------------------------------------------------------------
@@ -225,29 +238,7 @@ df_test <- pca_values %>%
   ungroup() %>% 
   mutate(column = reorder_within(column, abs(value), PC))
 
-condition <- 
-  if_else(df_test$column %in% c("tympana_anterior_proximo_distal_length___PC1",
-                                "tympana_anterior_proximo_distal_length___PC2") ,
-          1, 3)
-
-
-condition = c(str_length(df_test$column) >= 30 & str_detect(df_test$column,
-                                                            "PC1"),
-              str_length(df_test$column) <= 22 & str_detect(df_test$column,
-                                                            "PC1"))
-true = c(1,5)
-false = c(3,3)
-
-condition_aes <- 
-  if_else(condition = condition,
-          true = true,
-          false = false)
-contribution_plot
-
-df_test$column
 
 
 
-condition = case_when((str_length(df_test$column) >= 30 & 
-                         str_detect(df_test$column,"PC1")) ~ 1,
-                      TRUE ~ 3)
+
