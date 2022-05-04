@@ -268,7 +268,7 @@ plotting_table <- plotting_table %>%
                                          box.padding = 1)))
 
 # Write data --------------------------------------------------------------
-dir.create(path = "data/images")
+dir.create(path = "results")
 
 plotting_table %>%
   pwalk(.f = ~ ggsave(filename = str_c("04_",
@@ -276,7 +276,7 @@ plotting_table %>%
                                        "_plot.pdf"),
                       plot = ..10,
                       device = cairo_pdf,
-                      path = "data/images/",
+                      path = "results",
                       width = 27,
                       height = 20,
                       units = "cm"))
