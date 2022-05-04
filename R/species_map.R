@@ -68,10 +68,12 @@ p <- ggplot(theworld) +
              max.overlaps = Inf) + 
   theme(panel.background = element_rect(fill = "aliceblue"))
 
+dir.create(path = "results")
+
 ggsave(filename = "06_map_plot.pdf",
        plot = p,
        device = cairo_pdf,
-       path = "data/images/",
+       path = "results",
        width = 27,
        height = 20,
        units = "cm")
