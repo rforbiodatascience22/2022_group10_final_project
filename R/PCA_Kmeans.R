@@ -15,11 +15,12 @@ morphometric_data <- read_tsv(file = "data/02_morphometric_data_clean.tsv",
                                                species_group = "f",
                                                sex = "f",
                                                communication_system = "f")) %>% 
-  select(!species_id &
+  select(!c(species_id,
+            article_year,
+            longitude, 
+            latitude) &
            !starts_with(c("author","collection")) &
-           !article_year &
-           !where(is.logical
-         ))
+           !where(is.logical))
 
 # Wrangle data ------------------------------------------------------------
 
@@ -140,7 +141,7 @@ kmeans_all %>%
   ggplot(aes(x = .fittedPC1,
              y = .fittedPC2)) +
   geom_point() + 
-  ggforce::geom_mark_ellipse(aes(fill = .cluster,
+  ggforce::geom_mark_hull(aes(fill = .cluster,
                               group = .cluster)) +
   facet_wrap(vars(k))
   
