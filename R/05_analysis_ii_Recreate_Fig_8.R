@@ -17,10 +17,12 @@ plot4 <- Fig8plot(phys_data,"ampliatus","Poecilimon ampliatus")
 
 p <- (plot1 + plot2) / (plot3 + plot4)
 # Write data --------------------------------------------------------------
+dir.create(path = "results")
+
 ggsave(filename = "05_auditory_threshold_vs_frequency_plot.pdf",
        plot = p,
        device = cairo_pdf,
-       path = "data/images/",
+       path = "results",
        width = 27,
        height = 20,
        units = "cm")
