@@ -220,32 +220,32 @@ scree_plot <-
 
 ### K-cluster
 
-kmeans_all <- tibble(
-  k = 1:6 ) %>% 
-  mutate(
-  classifier = map(.x = k, 
-                   .f = ~kmeans(x = augmented_morpho %>% 
-                                  select(where(is.numeric) & c(.fittedPC1,.fittedPC2)),
-                                centers = .x)),
-  clusters = map(.x = classifier,
-                  .f = tidy),
-  sum_of_squares = map(.x = classifier,
-                        .f = glance),
-  data = map(.x = classifier,
-              .f = ~ augment(.x,
-                             augmented_morpho))
-  )
+# kmeans_all <- tibble(
+#   k = 1:6 ) %>% 
+#   mutate(
+#   classifier = map(.x = k, 
+#                    .f = ~kmeans(x = augmented_morpho %>% 
+#                                   select(where(is.numeric) & c(.fittedPC1,.fittedPC2)),
+#                                 centers = .x)),
+#   clusters = map(.x = classifier,
+#                   .f = tidy),
+#   sum_of_squares = map(.x = classifier,
+#                         .f = glance),
+#   data = map(.x = classifier,
+#               .f = ~ augment(.x,
+#                              augmented_morpho))
+#   )
 
 ### marking geoms seem to go crazy with facet_wrap
-kmeans_all %>% 
-  unnest(cols = c(data)) %>% 
-  ggplot(aes(x = .fittedPC1,
-             y = .fittedPC2)) +
-  geom_point() + 
-  ggforce::geom_mark_hull(aes(fill = .cluster,
-                              group = .cluster)) +
-  facet_wrap(vars(k))
-
+# kmeans_all %>% 
+#   unnest(cols = c(data)) %>% 
+#   ggplot(aes(x = .fittedPC1,
+#              y = .fittedPC2)) +
+#   geom_point() + 
+#   ggforce::geom_mark_hull(aes(fill = .cluster,
+#                               group = .cluster)) +
+#   facet_wrap(vars(k))
+# 
 
 
 
@@ -262,7 +262,7 @@ walk2(.x = plots,
                                     "_plot.pdf"),
                    plot = .x,
                    device = cairo_pdf,
-                   path = "data/results/",
+                   path = "results/",
                    width = 27,
                    height = 20,
                    units = "cm"))
