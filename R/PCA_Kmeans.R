@@ -3,6 +3,7 @@ library("tidyverse")
 library("ggrepel")
 library("broom")
 library(ggrepel)
+library(tidytext)
 
 # Define functions --------------------------------------------------------
 source(file = "R/99_project_functions.R")
@@ -28,15 +29,14 @@ morphometric_data <- morphometric_data %>%
   mutate(communication_group = {case_when(genus == "Poecilimon" & 
                                             communication_system == "bi-directional" ~ "Poecilimon bi-directional",
                                           TRUE ~ as.character(species_group)) %>%
-      as_factor()})
+      as_factor()}) %>% 
+  select(!c(sensillae_count))
 
-morphometric_data_test <- 
+morphometric_data_numeric <- 
   morphometric_data  %>% 
   select(where(is.numeric)) %>% 
-  select(!c(sensillae_count)) %>% 
   drop_na() 
 # Model data --------------------------------------------------------------
-
 
 insect_pca <- 
   morphometric_data_test %>% 
@@ -56,29 +56,49 @@ pca_values <- insect_pca %>%
     "PC7" = "7"
   ))
               
-
-### Contribution to first 3 PCs --------------------------------------------
-
 augmented_morpho <- insect_pca %>% 
-  augment(morphometric_data %>% 
-            select(!c(sensillae_count)) %>% 
+  augment(morphometric_data %>%
             drop_na() %>% 
             select(genus_species,
                    sex,
                    communication_system,
                    communication_group)) 
-pca_values %>% 
-  filter(PC %in% c("PC1", "PC2")) %>% 
-  ggplot(mapping = aes(x = value,
-                       y = column,
-                       fill = value > 0)) +
-  geom_col() +
-  facet_wrap(vars(PC), nrow = 1)
+
+### Contribution to first 2 PCs --------------------------------------------
+colors = scales::hue_pal()(2) %>% 
+  set_names(c("negative","positive"))
+colors <- colors %>% 
+  map2_chr(.x = colors,
+          .y = names(colors),
+          .f = ~glue("<span style='color:{.x};'>{.y}</span>"))
 
 
+contribution_plot <- 
+  pca_values %>% 
+    filter(PC %in% c("PC1", "PC2")) %>% 
+    group_by(PC) %>% 
+    ungroup() %>% 
+    mutate(column = reorder_within(column, abs(value), PC)) %>% 
+    ggplot(mapping = aes(x = abs(value),
+                         y = column,
+                         fill = value < 0)) +
+    geom_col(show.legend = FALSE) +
+    facet_wrap(vars(PC),scales = "free") +
+    scale_y_discrete(labels = function(x) str_remove(string = x,
+                                                     pattern = "__.+")) +
+    labs(title = "Contribution of insect data features to first two principal components.",
+           subtitle = glue("Absolute contribution of the {pluck(colors,'positive')} and
+                           {pluck(colors,'negative')} features.")) +
+    theme(plot.title = element_markdown(face = "bold"),
+          plot.title.position = "plot",
+          plot.subtitle = element_markdown(),
+          axis.title = element_blank())
+  
+  
+ ## PCA Plot -----------------------------------------------------------------
 
-## PCA Plot -----------------------------------------------------------------
 
+biplot <-
 augmented_morpho %>% 
   ggplot(mapping = aes(x = .fittedPC1,
                        y =.fittedPC2)) +
@@ -145,3 +165,15 @@ kmeans_all %>%
                               group = .cluster)) +
   facet_wrap(vars(k))
   
+
+r_squared_sensillae_femur = "bam bam"
+colored_name_poecilimon = "sup"
+
+glue("for females. \n\n A regression
+line is calculated for bidirectional
+{colored_name_poecilimon} species
+(R<sup>2</sup> = {r_squared_sensillae_femur})" )
+
+
+
+
