@@ -97,15 +97,40 @@ contribution_plot <-
   
  ## PCA Plot -----------------------------------------------------------------
 
+PCA_colors <- 
+  scales::hue_pal()(morphometric_data %>%
+                      pull(communication_group) %>%
+                      nlevels()) %>% 
+  set_names(morphometric_data %>% 
+              pull(communication_group) %>% 
+              levels())
+PCA_colors <- 
+  map2_chr(.x = PCA_colors,
+           .y = names(PCA_colors),
+           .f = ~glue("<span style='color:{.x};'>{.y}</span>"))
 
+
+loading_arrow <- arrow(angle = 30,
+                       length = unit(0.1, "cm"),
+                       ends = "first",
+                       type = "closed") 
+  
 biplot <-
 augmented_morpho %>% 
   ggplot(mapping = aes(x = .fittedPC1,
                        y =.fittedPC2)) +
+  geom_hline(yintercept = 0, 
+             linetype = "dashed",
+             alpha = 0.5) +
+  geom_vline(xintercept = 0,
+             linetype = "dashed",
+             alpha = 0.5) +
   geom_point(aes(color = communication_group,
                  shape = sex),
-             size = 2) + 
-  geom_text(aes(label = genus_species),
+             size = 2,
+             show.legend = FALSE,
+             fill = "white") + 
+  geom_text_repel(aes(label = genus_species),
             size = 1) +
   geom_segment(data = 
                  pca_values %>% 
@@ -115,7 +140,8 @@ augmented_morpho %>%
                aes(x = PC1,
                y = PC2,
                xend = 0,
-               yend = 0)) + 
+               yend = 0),
+               arrow = loading_arrow) +
   geom_text_repel(data = 
                     pca_values %>% 
                     pivot_wider(names_from = PC,
@@ -124,7 +150,22 @@ augmented_morpho %>%
                   aes(x = PC1,
                   y = PC2,
                   label = column),
-                  size = 1)
+                  size = 1) + 
+  scale_shape_manual(values = c(21,
+                                19)
+                     ) +
+  labs(title = "A biplot of numeric insect data showing clear seperation between communication groups",
+       subtitle = glue("A biplot with scores (points) and  loadings (arrows), with most variation in 
+       pronutum length and spiracle length. \n
+       Scores are divided into {str_c(PCA_colors, collapse = ', ')}, as well as females 🌑 and males 🌕."),
+       x = "PC1", 
+       y = "PC2") +
+  theme(plot.title.position = "plot",
+        plot.title = element_markdown(face = "bold"),
+        plot.subtitle = element_markdown(),
+        panel.grid = element_blank())
+
+
 
 ### Scree Plot
 
