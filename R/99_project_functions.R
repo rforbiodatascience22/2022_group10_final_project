@@ -64,33 +64,8 @@ tidy_extract_meta <- function(data,
              pull(1))
 }
 
-#Function for fig 8
 
-Fig8plot <- function(data,
-                     Species,
-                     title) {data_plot <- data %>%
-                       
-                       # Wrangle data ------------------------------------------------------------
-                     
-                     group_by(frequency, sex) %>%
-                       filter(species == Species) %>% 
-                       summarise(n = n(),
-                                 mean = mean(auditory_threshold,na.rm = TRUE),
-                                 sd = sd(auditory_threshold, na.rm = TRUE)) %>%
-                       mutate(lower = mean - sd,
-                              upper = mean + sd) #%>% 
-                     data_plot %>%
-                       ggplot(aes(x = frequency, 
-                                  y = mean,
-                                  color = sex,
-                       )) +
-                       geom_point() + 
-                       geom_errorbar(aes(ymin=lower, ymax=upper), width=.2,
-                                     position=position_dodge(.9)) +
-                       geom_line() +
-                       ggtitle(title) +
-                       xlab("Frequency [KHz]") +
-                       ylab("Auditory threshold \n [dB SPL]")
-}
+
+
 
                     
