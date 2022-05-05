@@ -79,6 +79,7 @@ above 50 dB SPL.
 -Loading the script-merging multiple datasets from 1 excel sheet
 -Recreating morphometric plots by recognizing the general patterns of the plots
 -Removed unexplainable data (e.g. rows in meta data with "ex Stumpner & Heller, 1992")
+-lack of consistant ID makes reproducibility difficult
  
 ## Slide with R Output
 
