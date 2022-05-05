@@ -47,7 +47,7 @@ p <- (plot1 + plot2) /
 # Write data --------------------------------------------------------------
 dir.create(path = "results")
 
-ggsave(filename = "05_auditory_threshold_vs_frequency_plot.pdf",
+ggsave(filename = "06_auditory_threshold_vs_frequency_plot.pdf",
        plot = p,
        device = cairo_pdf,
        path = "results",
