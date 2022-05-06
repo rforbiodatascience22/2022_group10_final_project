@@ -30,7 +30,7 @@ morphometric_data <- morphometric_data %>%
                                             communication_system == "bi-directional" ~ "Poecilimon bi-directional",
                                           TRUE ~ as.character(species_group)) %>%
       as_factor()}) %>% 
-  select(!c(sensillae_count))
+  select(!c(sensillae_count,tympana_anterior_dorso_ventral_length, tympana_posterior_dorso_ventral_length))
 
 morphometric_data_numeric <- 
   morphometric_data  %>% 
@@ -51,9 +51,10 @@ pca_values <- insect_pca %>%
     "PC2" = "2",
     "PC3" = "3",
     "PC4" = "4",
-    "PC5" = "5",
-    "PC6" = "6",
-    "PC7" = "7"
+    "PC5" = "5"#,
+    #"PC6" = "6",
+    #"PC7" = "7",
+    #"PC8" = "8"
   ))
               
 augmented_morpho <- insect_pca %>% 
@@ -87,8 +88,10 @@ condition = case_when((str_length(label_data) >= 30 &
                         str_detect(label_data,"PC1") ~ 1.1,
                       str_length(label_data) >= 30 & 
                         str_detect(label_data,"PC2") ~ -0.1,
-                      str_length(label_data) <= 23 & 
-                        str_detect(label_data,"PC2") ~ 1.1)
+                      #str_length(label_data) <= 23 & 
+                        str_detect(label_data,"spiracle_length___PC2") ~ 1.1,
+                      str_detect(label_data, "pronotum_length___PC2") ~ -0.2,
+                      str_detect(label_data, "hind_femur_length___PC2") ~ -0.1)#1.1)
 
 contribution_plot <- 
   contribution_data %>% 
@@ -151,8 +154,11 @@ augmented_morpho %>%
              size = 2,
              show.legend = FALSE,
              fill = "white") + 
-  geom_text_repel(aes(label = genus_species),
-            size = 1) +
+  geom_text_repel(aes(label = genus_species,
+                      color = communication_group),
+            size = 2,
+            show.legend = FALSE,
+            max.overlaps = 5) +
   geom_segment(data = 
                  pca_values %>% 
                  pivot_wider(names_from = PC,
@@ -171,7 +177,7 @@ augmented_morpho %>%
                   aes(x = PC1,
                   y = PC2,
                   label = column),
-                  size = 1) + 
+                  size = 3) + 
   scale_shape_manual(values = c(21,
                                 19)
                      ) +
@@ -219,41 +225,137 @@ scree_plot <-
 
 
 ### K-cluster
+ kmeans_all <- tibble(
+   k = 1:6 ) %>%
+   mutate(
+   classifier = map(.x = k,
+                    .f = ~kmeans(x = augmented_morpho %>%
+                                   select(where(is.numeric) & c(.fittedPC1,.fittedPC2)),
+                                 centers = .x)),
+   clusters = map(.x = classifier,
+                   .f = tidy),
+   sum_of_squares = map(.x = classifier,
+                         .f = glance),
+   data = map(.x = classifier,
+               .f = ~ augment(.x,
+                              augmented_morpho))
+   )
 
-# kmeans_all <- tibble(
-#   k = 1:6 ) %>% 
-#   mutate(
-#   classifier = map(.x = k, 
-#                    .f = ~kmeans(x = augmented_morpho %>% 
-#                                   select(where(is.numeric) & c(.fittedPC1,.fittedPC2)),
-#                                 centers = .x)),
-#   clusters = map(.x = classifier,
-#                   .f = tidy),
-#   sum_of_squares = map(.x = classifier,
-#                         .f = glance),
-#   data = map(.x = classifier,
-#               .f = ~ augment(.x,
-#                              augmented_morpho))
-#   )
+### marking geoms(hull) seem to go crazy with facet_wrap
 
-### marking geoms seem to go crazy with facet_wrap
-# kmeans_all %>% 
-#   unnest(cols = c(data)) %>% 
-#   ggplot(aes(x = .fittedPC1,
-#              y = .fittedPC2)) +
-#   geom_point() + 
-#   ggforce::geom_mark_hull(aes(fill = .cluster,
-#                               group = .cluster)) +
-#   facet_wrap(vars(k))
-# 
+label_args <- list(
+  xend = c(-4.2, 1.5, 1, -0.8, 1.2),
+  yend = c(0.3, 0.5, 0.25, -0.25, -1),
+  x = c(-3, 1, -1, -3, 1.5),
+  y = c(0.6, 1, 1, -1.5, -1.75),
+  label = c("Poecilimon",
+            "Propinquus",
+            "Ampliatus", 
+            "I.Modestior",
+            "Poecilimon"),
+  vjust = c("bottom", 
+            "bottom", 
+            "bottom",
+            "top",
+            "top"),
+  hjust = rep("none", 5)
+)
+
+k <- kmeans_all %>% 
+  unnest(cols = c(sum_of_squares)) %>% 
+  pull(k)
+
+ss <- kmeans_all %>% 
+  unnest(cols = c(sum_of_squares)) %>% 
+  pull(tot.withinss)
+
+labels <-  map2_chr(.x = k,
+                    .y = round(ss,0),
+                    .f = ~glue("{.x} clusters. \n 
+                   {.y} total within sum of squares.")) %>% 
+  set_names(1:6)
 
 
+multiple_kluster <- 
+ kmeans_all  %>%
+   unnest(cols = c(data))  %>% 
+   ggplot(aes(x = .fittedPC1,
+              y = .fittedPC2)) +
+   geom_point(aes(shape = sex),
+              fill = "white",
+              show.legend = FALSE) +
+   ggforce::geom_mark_ellipse(aes(fill = .cluster,
+                               group = .cluster),
+                              alpha = 0.3,
+                              size = 0.1,
+                              show.legend = FALSE)  +
+   scale_shape_manual(values = c(21,19)) +
+   facet_wrap(~k, labeller = as_labeller(labels)) +
+   theme(plot.title = element_markdown(face = "bold"),
+         plot.subtitle = element_markdown(),
+         axis.title = element_blank(),
+         axis.ticks = element_blank(),
+         axis.text = element_blank(),
+         panel.grid = element_blank()) +
+   pmap(.l = label_args,
+         .f = annotate_with_arrow) + 
+   labs(title = "K-Means clustering on insect data*",
+        subtitle = "Clustering run with varying number of clusters, females 🌑, males 🌕.")
+
+
+### total within sum of squares plot 
+
+bold_point <- c(x = 4,
+                y = kmeans_all %>% 
+                  unnest(cols = c(sum_of_squares)) %>% 
+                  filter(k == 4) %>% 
+                  pluck("tot.withinss")
+                )
+
+twss <- kmeans_all %>% 
+  unnest(cols = c(sum_of_squares)) %>% 
+  ggplot(mapping = aes(x = k ,
+                       y = tot.withinss)) + 
+  geom_line(color = "#00abaf") +
+  annotate(geom = "point", 
+           x = bold_point %>% pluck("x"),
+           y = bold_point %>% pluck("y"), 
+           color = "#00abaf",
+           size = 4, 
+  ) +
+  geom_point() +
+  scale_x_continuous(breaks = 1:6) +
+  annotate(geom = "curve",
+           x = bold_point %>% pluck("x") + 0.1 * bold_point %>% pluck("x"), 
+           y = bold_point %>% pluck("y") + 1 * bold_point %>% pluck("y"),
+           xend = bold_point %>% pluck("x"),
+           yend = bold_point %>% pluck("y"),
+           curvature = 0.4,
+           arrow = arrow(length = unit(2, "mm"))) +
+  annotate(geom = "text",
+           x = bold_point %>% pluck("x") + 0.1 * bold_point %>% pluck("x"),
+           y = bold_point %>% pluck("y") + 1 * bold_point %>% pluck("y"),
+           label = "4 clusters",
+           hjust = "left") +
+  labs(title = "Total within sum of squares vs number of clusters.") +
+  theme(plot.title = element_markdown(face  = "bold"),
+        plot.title.position = "plot",
+        axis.text.x = element_blank(),
+        axis.ticks = element_blank(),
+        axis.title = element_blank())
+
+
+kmeans_all %>% 
+  unnest(cols = c(sum_of_squares)) %>% 
+  mutate(k = as_factor(k)) 
 
 ### export plots
 
 plots <- list("contribution_plot" = contribution_plot,
               "scree_plot" = scree_plot,
-              "biplot" = biplot)
+              "biplot" = biplot,
+              "multiple_kluster" = multiple_kluster,
+              "twss" = twss)
 
 walk2(.x = plots,
      .y = names(plots),
@@ -266,4 +368,6 @@ walk2(.x = plots,
                    width = 27,
                    height = 20,
                    units = "cm"))
+
+
 
