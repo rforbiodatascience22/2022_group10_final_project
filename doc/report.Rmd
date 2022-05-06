@@ -49,6 +49,11 @@ communication systemsidae,hearing organs are essential in mate detection(Unidire
 ## Graphs
 
 ## Results
+<center>
+![](../results/04_spiracle_length_vs_hind_femur_length_plot.svg){width=750px}
+</center>
+
+## Results
 - Spiracle size was correlated with the communication system of the respective species and showed clustering into discrete groups
 - The tympana scale with body size , whereas the spiracles differ between uni- and bidirectional acoustically communicating species and between sexes.
 - In species with unidirectional communication, the spiracles are much smaller than the
