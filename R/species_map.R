@@ -21,32 +21,9 @@ map_data <- map_data %>%
   distinct()
 
 
-eu_map <- world_map %>% 
-  as_tibble() %>%  
-  filter(region %in% eu)
-
-world_map %>% 
-  ggplot(mapping = aes(
-    x = long,
-    y = lat
-  )) + 
-  geom_map(map = eu_map,
-           mapping = aes(
-    map_id = region),
-    color = "black",
-    fill = "lightgreen",
-    size = 0.1,
-    alpha = 0.5
-  ) +
-  geom_point(data = map_data,
-             mapping = aes(x = longitude,
-                           y = latitude)) +
-  xlim(c(-10,40)) +
-  ylim(c(30,70))
-
 theworld <- spData::world %>% filter(region_un == "Europe")
-view(theworld)
-ggplot(theworld) +
+
+p <- ggplot(theworld) +
   geom_sf(color = "gray",
           fill = "lightgreen",
           alpha = 0.5) + 
@@ -61,6 +38,18 @@ ggplot(theworld) +
              mapping = aes(x = longitude,
                            y = latitude,
                            label = genus_species),
-             max.overlaps = Inf) + 
-  theme(panel.background = element_rect(fill = "aliceblue"))
-map_data %>% view()
+             max.overlaps = Inf,
+             box.padding = 0.5)+ 
+  labs(title = "Map of the insect species origins.") +
+  theme(panel.background = element_rect(fill = "aliceblue"), 
+        plot.title = element_markdown(face = "bold"))
+
+dir.create(path = "results")
+
+ggsave(filename = "06_map_plot.pdf",
+       plot = p,
+       device = cairo_pdf,
+       path = "results",
+       width = 27,
+       height = 20,
+       units = "cm")
