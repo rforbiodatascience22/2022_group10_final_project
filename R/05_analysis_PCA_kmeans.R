@@ -185,7 +185,7 @@ augmented_morpho %>%
   labs(title = "A biplot of numeric insect data showing clear seperation between communication groups",
        subtitle = glue("A biplot with scores (points) and  loadings (arrows), with most variation in 
        pronutum length and spiracle length. \n
-       Scores are divided into {str_c(PCA_colors, collapse = ', ')}, as well as females 🌑 and males 🌕."),
+       Scores are divided into {str_c(PCA_colors, collapse = ', ')}, as well as females ● and males ○."),
        x = "PC1", 
        y = "PC2") +
   theme(plot.title.position = "plot",
@@ -301,7 +301,7 @@ multiple_kluster <-
    pmap(.l = label_args,
          .f = annotate_with_arrow) + 
    labs(title = "K-Means clustering on insect data*",
-        subtitle = "Clustering run with varying number of clusters, females 🌑, males 🌕.")
+        subtitle = "Clustering run with varying number of clusters, females ●, males ○.")
 
 
 ### Single Clustering 
@@ -398,13 +398,9 @@ walk2(.x = plots,
      .y = names(plots),
       .f = ~ ggsave(filename = str_c("05_",
                                     .y,
-                                    "_plot.pdf"),
+                                    "_plot.svg"),
                    plot = .x,
-                   device = cairo_pdf,
-                   path = "results/",
-                   width = 27,
+                   path = "results",
+                   width = 30,
                    height = 20,
                    units = "cm"))
-
-
-
