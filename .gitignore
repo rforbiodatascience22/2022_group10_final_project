@@ -4,5 +4,7 @@
 .Ruserdata
 /data/*
 !/data/_raw/
-/doc/
+/doc/*
+!/doc/report.Rmd
+!/doc/images/
 /results/
