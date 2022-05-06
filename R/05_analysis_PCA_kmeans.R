@@ -23,6 +23,7 @@ morphometric_data <- read_tsv(file = "data/02_morphometric_data_clean.tsv",
            !starts_with(c("author","collection")) &
            !where(is.logical))
 
+  
 # Wrangle data ------------------------------------------------------------
 
 morphometric_data <- morphometric_data %>%
@@ -249,8 +250,8 @@ label_args <- list(
   x = c(-3, 1, -1, -3, 1.5),
   y = c(0.6, 1, 1, -1.5, -1.75),
   label = c("Poecilimon",
-            "Propinquus",
-            "Ampliatus", 
+            "Ampliatus",
+            "Propinquus", 
             "I.Modestior",
             "Poecilimon"),
   vjust = c("bottom", 
@@ -303,6 +304,45 @@ multiple_kluster <-
         subtitle = "Clustering run with varying number of clusters, females 🌑, males 🌕.")
 
 
+### Single Clustering 
+
+single_center_clustering <- 
+kmeans_all  %>%
+  unnest(cols = c(data))  %>% 
+  mutate(communication_group_2 = if_else(condition = communication_group == "Poecilimon bi-directional" & 
+                                           .fittedPC1 < -2, 
+                                         true = "Poecilimon bi-directional_high",
+                                         false = as.character(communication_group))) %>% 
+  filter(k == 4) %>% 
+  ggplot(aes(x = .fittedPC1,
+             y = .fittedPC2)) +
+  geom_point(aes(shape = sex),
+             fill = "white",
+             show.legend = FALSE) +
+  ggforce::geom_mark_ellipse(aes(fill = .cluster,
+                                 group = .cluster),
+                             alpha = 0.3,
+                             size = 0.1,
+                             show.legend = FALSE)  +
+  ggforce::geom_mark_hull(aes(group = communication_group_2),
+                          linetype = "dashed",
+                          color = "darkgray") +
+  scale_shape_manual(values = c(21,19))  +
+  theme(plot.title = element_markdown(face = "bold"),
+        plot.title.position = "plot",
+        plot.subtitle = element_markdown(),
+        axis.title = element_blank(),
+        axis.ticks = element_blank(),
+        axis.text = element_blank(),
+        panel.grid = element_blank()) +
+  pmap(.l = label_args,
+       .f = annotate_with_arrow) +
+  labs(title = "K-means clustering with 4 centers.",
+       subtitle = "K-means done on the first two principal components. 
+       Dashed line represents the five communication groups")
+
+
+
 ### total within sum of squares plot 
 
 bold_point <- c(x = 4,
@@ -345,17 +385,14 @@ twss <- kmeans_all %>%
         axis.title = element_blank())
 
 
-kmeans_all %>% 
-  unnest(cols = c(sum_of_squares)) %>% 
-  mutate(k = as_factor(k)) 
-
 ### export plots
 
 plots <- list("contribution_plot" = contribution_plot,
               "scree_plot" = scree_plot,
               "biplot" = biplot,
               "multiple_kluster" = multiple_kluster,
-              "twss" = twss)
+              "twss" = twss,
+              "single_center_clustering" = single_center_clustering)
 
 walk2(.x = plots,
      .y = names(plots),
