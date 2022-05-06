@@ -47,11 +47,9 @@ p <- (plot1 + plot2) /
 # Write data --------------------------------------------------------------
 dir.create(path = "results")
 
-ggsave(filename = "06_auditory_threshold_vs_frequency_plot.pdf",
+ggsave(filename = "06_auditory_threshold_vs_frequency_plot.svg",
        plot = p,
-       device = cairo_pdf,
        path = "results",
-       width = 27,
+       width = 30,
        height = 20,
        units = "cm")
-
