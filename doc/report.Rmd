@@ -50,7 +50,22 @@ communication systemsidae,hearing organs are essential in mate detection(Unidire
 
 ## Results
 <center>
-![](../results/04_spiracle_length_vs_hind_femur_length_plot.svg){width=750px}
+  ![](../results/04_tympana_anterior_proximo_distal_length_vs_hind_femur_length_plot.svg){width=750px}
+</center>
+
+## Results
+<center>
+  ![](../results/04_spiracle_length_vs_hind_femur_length_plot.svg){width=750px}
+</center>
+
+## Results
+<center>
+  ![](../results/04_spiracle_length_vs_tympana_anterior_proximo_distal_length_plot.svg){width=750px}
+</center>
+
+## Results
+<center>
+  ![](../results/04_sensillae_count_vs_hind_femur_length_plot.svg){width=750px}
 </center>
 
 ## Results
