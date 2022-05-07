@@ -12,6 +12,8 @@ date: "2022-05-02"
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
+![](../results/05_auditory_threshold_vs_frequency_plot.svg)
+
 ## Introduction to the project
 -Sensory evolution of hearing in tettigoniids with differing
 communication systems
