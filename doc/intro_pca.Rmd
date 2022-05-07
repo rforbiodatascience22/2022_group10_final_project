@@ -12,7 +12,7 @@ date: '2022-05-07'
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
-## <font size = "4"> Sensory evolution of hearing in tettigoniids with differing communication systems. </font>
+## Background
 
 <div class="columns-2">
 
@@ -41,8 +41,9 @@ as - auditory spiracle, at - auditory trachea, ty - tympana
 
 ## PCA
 
-```{r, out.width="98%", fig.align='center'}
-knitr::include_graphics("../results/05_biplot_plot.svg")
+```{r, out.width="98%", fig.align='center', fig.show = 'hold', out.width="40%"}
+knitr::include_graphics(c("../results/05_contribution_plot_plot.svg",
+                          "../results/05_biplot_plot.svg"))
 
 ```
 
