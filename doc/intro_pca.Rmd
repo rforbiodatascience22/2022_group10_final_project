@@ -41,10 +41,16 @@ as - auditory spiracle, at - auditory trachea, ty - tympana
 
 ## PCA
 
-```{r, out.width="98%", fig.align='center', fig.show = 'hold', out.width="40%"}
+```{r, fig.show = "hold", out.width="50%"}
 knitr::include_graphics(c("../results/05_contribution_plot_plot.svg",
                           "../results/05_biplot_plot.svg"))
 
 ```
 
+- not all variables used due to missing values
 
+- size and tympana length correlated 
+
+- spiracle length larger in bi-directional species
+
+- females larger than males
