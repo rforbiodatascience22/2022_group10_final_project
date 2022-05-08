@@ -46,9 +46,8 @@ p <- ggplot(theworld) +
 
 dir.create(path = "results")
 
-ggsave(filename = "06_map_plot.pdf",
+ggsave(filename = "07_map_plot.svg",
        plot = p,
-       device = cairo_pdf,
        path = "results",
        width = 27,
        height = 20,
