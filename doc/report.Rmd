@@ -81,6 +81,12 @@ knitr::include_graphics(path = "../doc/images/Database.jpg")
 
 ## Methods
 
+
+## Loading the datasets
+```{r, out.width="90%", fig.align='center'}
+knitr::include_graphics("../doc/images/load2.jpg")
+```
+
 ## Morphological results
 
 - Spiracle size correlated with communication system
