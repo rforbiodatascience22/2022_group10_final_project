@@ -69,10 +69,8 @@ tympana_vs_femur_alternative_plot <- morphometric_data %>%
   theme(legend.position = "none")
 
 # Write data --------------------------------------------------------------
-ggsave(filename = str_c("04_",
-                        ..9,
-                        "_plot.svg"),
-       plot = ..10,
+ggsave(filename = "08_tympana_vs_femur_alternative_plot.svg",
+       plot = tympana_vs_femur_alternative_plot,
        path = "results",
        width = 30,
        height = 20,
