@@ -50,7 +50,7 @@ morphometric_data_dark_grey <- morphometric_data %>%
               select(!genus_species),
             by = "communication_group")
 
-morphometric_data %>%
+tympana_vs_femur_alternative_plot <- morphometric_data %>%
   ggplot(mapping = aes(x = hind_femur_length,
                        y = tympana_anterior_proximo_distal_length,
                        color = communication_group)) +
@@ -68,20 +68,12 @@ morphometric_data %>%
                                 19)) +
   theme(legend.position = "none")
 
-
-morphometric_data %>%
-  ggplot(mapping = aes(x = hind_femur_length,
-                       y = tympana_anterior_proximo_distal_length)) +
-  geom_density_2d(data = morphometric_data %>%
-               select(!c(communication_group,
-                         genus_species)),
-             fill = "grey") +
-  geom_point(data = morphometric_data_dark_grey,
-             color = "grey50") +
-  geom_point(mapping = aes(shape = sex),
-             fill = "white") +
-  facet_wrap(facets = vars(communication_group, 
-                           genus_species)) +
-  scale_shape_manual(values = c(21,
-                                19)) +
-  theme(legend.position = "none")
+# Write data --------------------------------------------------------------
+ggsave(filename = str_c("04_",
+                        ..9,
+                        "_plot.svg"),
+       plot = ..10,
+       path = "results",
+       width = 30,
+       height = 20,
+       units = "cm")
