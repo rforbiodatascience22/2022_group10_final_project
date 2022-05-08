@@ -33,15 +33,10 @@ communication systemsidae,hearing organs are essential in mate detection(Unidire
 
 ## {data-background=graph.jpeg data-background-size=center}
 
-## Dataset, choice and considerations
-- Messy dataset,missing data and non tidy format
-- Datasets considered
- (i) Measurements for the different crickets
- (ii) Measurements for auditory threshold
-- Lack of consistent ID's making merging of datasets impossible
-- Units in database 2
-- Tricky metadata
--joining metadata to gain new insights
+## Loading the dataset
+- Most challenging datasets-Physiological and Meta data set
+- Combining the subtables
+
 
 
 ## Workflow of the project
