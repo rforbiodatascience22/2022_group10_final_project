@@ -114,16 +114,21 @@ knitr::include_graphics("../results/06_auditory_threshold_vs_frequency_plot.svg"
 
 ```{r, fig.show = "hold", out.width="50%"}
 knitr::include_graphics(c("../results/05_contribution_plot_plot.svg",
-                          "../results/05_biplot_plot.svg"))
+                          "../results/05_scree_plot_plot.svg"))
 ```
 
 - not all variables used due to missing values
 
-- size and tympana length correlated 
+- size and tympana but not spiracle length correlated 
 
 - spiracle length larger in bi-directional species
 
-- females larger than males
+## PCA
+
+```{r, out.width="95%", fig.align='center'}
+knitr::include_graphics(c("../results/05_biplot_plot.svg"))
+```
+
 
 ## Clustering
 
