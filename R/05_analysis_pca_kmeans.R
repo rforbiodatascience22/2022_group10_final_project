@@ -139,6 +139,12 @@ loading_arrow <- arrow(angle = 30,
                        length = unit(0.1, "cm"),
                        ends = "first",
                        type = "closed") 
+
+
+PCA_var <- insect_pca %>% 
+  tidy(matrix = "eigenvalues") %>% 
+  mutate(percent = round(percent * 100, 1) ) %>% 
+  pull(percent)
   
 biplot <-
 augmented_morpho %>% 
@@ -186,14 +192,12 @@ augmented_morpho %>%
        subtitle = glue("A biplot with scores (points) and  loadings (arrows), with most variation in 
        pronutum length and spiracle length. \n
        Scores are divided into {str_c(PCA_colors, collapse = ', ')}, as well as females ● and males ○."),
-       x = "PC1", 
-       y = "PC2") +
+       x = glue("PC1 ({str_c(PCA_var %>% pluck(1), '%')})"), 
+       y = glue("PC2 ({str_c(PCA_var %>% pluck(2), '%')})")) +
   theme(plot.title.position = "plot",
         plot.title = element_markdown(face = "bold"),
         plot.subtitle = element_markdown(),
         panel.grid = element_blank())
-
-
 
 ### Scree Plot
 
@@ -313,10 +317,11 @@ kmeans_all  %>%
                                            .fittedPC1 < -2, 
                                          true = "Poecilimon bi-directional_high",
                                          false = as.character(communication_group))) %>% 
-  filter(k == 4) %>% 
+  filter(k == 5) %>% 
   ggplot(aes(x = .fittedPC1,
              y = .fittedPC2)) +
-  geom_point(aes(shape = sex),
+  geom_point(aes(shape = sex,
+                 color = .cluster),
              fill = "white",
              show.legend = FALSE) +
   ggforce::geom_mark_ellipse(aes(fill = .cluster,
@@ -337,7 +342,7 @@ kmeans_all  %>%
         panel.grid = element_blank()) +
   pmap(.l = label_args,
        .f = annotate_with_arrow) +
-  labs(title = "K-means clustering with 4 centers.",
+  labs(title = "K-means clustering with 5 centers.",
        subtitle = "K-means done on the first two principal components. 
        Dashed line represents the five communication groups")
 

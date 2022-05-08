@@ -5,6 +5,6 @@
 /data/*
 !/data/_raw/
 /doc/*
-!/doc/report.Rmd
+!/doc/*.Rmd
 !/doc/images/
 /results/
