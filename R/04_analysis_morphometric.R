@@ -4,6 +4,7 @@ library("ggtext")
 library("ggrepel")
 library("broom")
 library("glue")
+library("svglite")
 
 # Define functions --------------------------------------------------------
 source(file = "R/99_project_functions.R")
@@ -194,9 +195,9 @@ plotting_table <- tibble(data = list(morphometric_summary,
                                     "proximodistal length of the anterior
                                     tympana",
                                     "hind fermur length"),
-                         subtitle_end = list("\n\n for females 🌑 and  males 🌕",
+                         subtitle_end = list("\n\n for females ● and  males ○",
                                              
-                                             "\n\n for females 🌑 and  males 🌕.
+                                             "\n\n for females ● and  males ○.
                                              Regression lines are calculated for
                                              bidirectional
                                              ${colored_name_poecilimon} species
@@ -206,7 +207,7 @@ plotting_table <- tibble(data = list(morphometric_summary,
                                              ${r_squared_spiracle_femur_female})" %>%
                                                str_interp(),
                                              
-                                             "\n\n for females 🌑 and  males 🌕.
+                                             "\n\n for females ● and  males ○.
                                              The line represents equal lengths
                                              for both hearing structures",
                                              
@@ -273,10 +274,9 @@ dir.create(path = "results")
 plotting_table %>%
   pwalk(.f = ~ ggsave(filename = str_c("04_",
                                        ..9,
-                                       "_plot.pdf"),
+                                       "_plot.svg"),
                       plot = ..10,
-                      device = cairo_pdf,
                       path = "results",
-                      width = 27,
+                      width = 30,
                       height = 20,
                       units = "cm"))

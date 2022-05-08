@@ -1,0 +1,56 @@
+---
+title: "Intro_PCA"
+output: ioslides_presentation
+date: '2022-05-07'
+---
+
+<style>
+.forceBreak { -webkit-column-break-after: always; break-after: column; }
+</style>
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Background
+
+<div class="columns-2">
+
+<font size = "4">   
+
+- The paper explores the consequences of communication strategies on adaptive sensory features. 
+
+- Morphology, neuroanatomy and hearing sensitivity
+
+- Uni and bi-directional species
+
+- **Hypothesis:** In bi-directional species selection favours high sensitivity, larger hearing structures and increased sensillae counts. 
+</font>
+
+<p class="forceBreak"></p>
+
+```{r}
+knitr::include_graphics(path = "../doc/images/insect_auditory.jpg")
+```
+<font size = "2"> **Auditory anatomy of tettigonoids**    
+as - auditory spiracle, at - auditory trachea, ty - tympana   
+</font>
+<font size = "0.5"> *(Strauss, Lehmann and Lehmann, 2013)* </font>
+
+</div>
+
+## PCA
+
+```{r, fig.show = "hold", out.width="50%"}
+knitr::include_graphics(c("../results/05_contribution_plot_plot.svg",
+                          "../results/05_biplot_plot.svg"))
+
+```
+
+- not all variables used due to missing values
+
+- size and tympana length correlated 
+
+- spiracle length larger in bi-directional species
+
+- females larger than males

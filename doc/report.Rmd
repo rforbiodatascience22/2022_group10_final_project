@@ -1,0 +1,149 @@
+---
+title:
+  Sensory evolution of hearing in tettigoniids with differing communication
+  systems
+subtitle: "Group 10"
+output: ioslides_presentation
+author: "Adresya Azhakath, Filip Uzdowski, Mikkel Wolfhagen, Nilas Schüsler"
+date: "2022-05-02"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+<style>
+.forceBreak { -webkit-column-break-after: always; break-after: column; }
+</style>
+
+## Background
+
+<div class="columns-2">
+
+<font size = "4">   
+
+- The paper explores the consequences of communication strategies on adaptive sensory features. 
+
+- Morphology, neuroanatomy and hearing sensitivity
+
+- Uni and bi-directional species
+
+- **Hypothesis:** In bi-directional species selection favours high sensitivity, larger hearing structures and increased sensillae counts. 
+</font>
+
+<p class="forceBreak"></p>
+
+```{r}
+knitr::include_graphics(path = "../doc/images/insect_auditory.jpg")
+```
+<font size = "2"> **Auditory anatomy of tettigonoids**    
+as - auditory spiracle, at - auditory trachea, ty - tympana   
+</font>
+<font size = "0.5"> *(Strauss, Lehmann and Lehmann, 2013)* </font>
+
+</div>
+
+## Material used for our analysis
+
+<font size = "4"> 
+<div class="columns-2">
+- Characteristics of the auditory system for functional adaptations analysed:
+  (i) Dimension of sound-receiving structures
+  (ii) Number of auditory sensilla
+  (iii) Hearing sensitivity
+- Fifteen species selected for morphometric analysis of auditory structures
+- Neuroanatomy and hearing sensitivity investigated in subset of five selected species
+- Animals collected at locations in Greece, Slovenia and the Czech Republic 
+- Specimens for anatomical measurements collected between 1994 and 1996 and stored in ethanol
+- Specimens for neuroanatomical and physiological experiments collected in May/June 2011 and June 2012
+
+</font>
+<p class="forceBreak"></p>
+<center>
+  ![](../results/07_map_plot.svg){width=470px}
+</center>
+</div>
+## Material used for our analysis
+
+<font size = "4"> 
+
+- List of individuals studied from the genus Poecilimon and the out-group genus Isophya(Table  S1)
+
+- *JEvolBiol_Sensory evolution Poecilimon_Database*
+Includes the data from morphometric measurements on structures of the auditory system in different Poecilimon tettigoniids and the data from physiological measurements of hearing thresholds.
+</font>
+
+<center>
+```{r}
+knitr::include_graphics(path = "../doc/images/Database.jpg")
+```
+</center>
+
+## Methods
+
+## Morphological results
+
+- Spracle size correlated with communication system
+
+- Tympana scales with body size
+
+- Sensilla number highest for bidirectional species
+
+<center>
+  ![](../results/04_tympana_anterior_proximo_distal_length_vs_hind_femur_length_plot.svg){width=380px}
+  ![](images/tympana_vs_femur_original.jpg){width=380px}
+</center>
+
+## Alternative morphological plot
+(insert figure here)
+
+## Clustering
+
+- K-means clustering (put plot here)
+
+- 5 clusters one for each species
+
+- Insert K-means plot here
+
+## Discussion
+
+- PCA 
+
+- Alternative plot
+
+- Limitations
+
+
+
+## Workflow of the project
+
+## Graphs
+
+## Results
+- Spiracle size was correlated with the communication system of the respective species and showed clustering into discrete groups
+- The tympana scale with body size , whereas the spiracles differ between uni- and bidirectional acoustically communicating species and between sexes.
+- In species with unidirectional communication, the spiracles are much smaller than the
+tympana, both in the P. propinquus group and especially in the P. ampliatus group.
+- The sensilla number is highest in the three
+bidirectional communicating Poecilimon species and the bidirectional out-group species I. modestior
+- Although the sexes within a
+species were similar, auditory sensitivity differed clearly
+between species
+-  Representatives of those species with large spiracles (P. ornatus, I. modestior) have
+the highest sensitivity
+- In P. ampliatus, a representative of a
+unidirectional communicating species with small acoustic spiracles, hearing thresholds are rather high, mainly
+above 50 dB SPL.
+-
+## Discussion
+- the greatest differences exist between bidirectional and unidirectional communicating species regardless of song characters.
+-  Can be assumed that overall body size might be the evolutionary target, if tympanal structures come under positive selection
+- Tympana are important structures for sound perception in Tettigoniidae, and neither the acoustic communication system nor sex greatly affects their size.
+- Limitations and drawbacks of the plots from the paper
+-Alternative representation of the plot(morphological comparison plot)
+
+##Challenges faced
+-Loading the script-merging multiple datasets from 1 excel sheet
+-Recreating morphometric plots by recognizing the general patterns of the plots
+-Removed unexplainable data (e.g. rows in meta data with "ex Stumpner & Heller, 1992")
+-lack of consistant ID makes reproducibility difficult

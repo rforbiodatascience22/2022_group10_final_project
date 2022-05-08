@@ -114,3 +114,28 @@ plot_mean_scatter <- function(data,
   
   mean_scatter_plot
 }
+
+
+annotate_with_arrow <- function(xend, yend, x, y, label, vjust, hjust) {
+  
+  list(
+    annotate(geom = "curve",
+           xend = xend,
+           yend = yend,
+           x = x,
+           y = y,
+           curvature = 0.3),
+       
+    annotate(geom = "text",
+             x = x + 0.4,
+             y = y + 0.05,
+             label = label,
+             vjust = vjust,
+             hjust = hjust)
+    )
+  
+  
+}
+
+
+
