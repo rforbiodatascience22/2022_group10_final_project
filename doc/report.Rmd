@@ -79,15 +79,28 @@ knitr::include_graphics(path = "../doc/images/Database.jpg")
 ```
 </center>
 
-## Data journey
+## Methods | Data journey
 <center>
   ![](images/flow_chart.svg){width=780px}
 </center>
 
-## Loading the datasets
+## Methods | Loading the datasets
 ```{r, out.width="90%", fig.align='center'}
 knitr::include_graphics("../doc/images/load2.jpg")
 ```
+
+## Methods | Cleaning the datasets
+- Fill NA
+- Split
+- Join
+
+![](images/cleaning.png){width=780px}
+
+## Methods | Analysis
+- Recreate plots ➞ reproducible?
+  - Linear models
+- PCA and clustering
+ - Choice of data set
 
 ## Morphological results
 
