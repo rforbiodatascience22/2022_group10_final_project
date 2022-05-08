@@ -99,6 +99,27 @@ knitr::include_graphics(path = "../doc/images/Database.jpg")
   ![](../results/08_tympana_vs_femur_alternative_plot.svg){width=720px}
 </center>
 
+## Auditory threshold vs frequency plot
+```{r, out.width="100%", fig.align='center'}
+knitr::include_graphics("../results/06_auditory_threshold_vs_frequency_plot.svg")
+```
+
+## PCA
+
+```{r, fig.show = "hold", out.width="50%"}
+knitr::include_graphics(c("../results/05_contribution_plot_plot.svg",
+                          "../results/05_biplot_plot.svg"))
+
+```
+
+- not all variables used due to missing values
+
+- size and tympana length correlated 
+
+- spiracle length larger in bi-directional species
+
+- females larger than males
+
 ## Clustering
 
 - 5 clusters one for each species
