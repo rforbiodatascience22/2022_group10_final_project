@@ -79,8 +79,10 @@ knitr::include_graphics(path = "../doc/images/Database.jpg")
 ```
 </center>
 
-## Methods
-
+## Data journey
+<center>
+  ![](images/flow_chart.svg){width=780px}
+</center>
 
 ## Loading the datasets
 ```{r, out.width="90%", fig.align='center'}
