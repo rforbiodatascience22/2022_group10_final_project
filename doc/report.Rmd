@@ -83,7 +83,7 @@ knitr::include_graphics(path = "../doc/images/Database.jpg")
 
 ## Morphological results
 
-- Spracle size correlated with communication system
+- Spiracle size correlated with communication system
 
 - Tympana scales with body size
 
@@ -95,15 +95,17 @@ knitr::include_graphics(path = "../doc/images/Database.jpg")
 </center>
 
 ## Alternative morphological plot
-(insert figure here)
+<center>
+  ![](../results/08_tympana_vs_femur_alternative_plot.svg){width=720px}
+</center>
 
 ## Clustering
 
-- K-means clustering (put plot here)
-
 - 5 clusters one for each species
 
-- Insert K-means plot here
+<center>
+  ![](../results/05_single_center_clustering_plot.svg){width=620px}
+</center>
 
 ## Discussion
 
@@ -112,38 +114,3 @@ knitr::include_graphics(path = "../doc/images/Database.jpg")
 - Alternative plot
 
 - Limitations
-
-
-
-## Workflow of the project
-
-## Graphs
-
-## Results
-- Spiracle size was correlated with the communication system of the respective species and showed clustering into discrete groups
-- The tympana scale with body size , whereas the spiracles differ between uni- and bidirectional acoustically communicating species and between sexes.
-- In species with unidirectional communication, the spiracles are much smaller than the
-tympana, both in the P. propinquus group and especially in the P. ampliatus group.
-- The sensilla number is highest in the three
-bidirectional communicating Poecilimon species and the bidirectional out-group species I. modestior
-- Although the sexes within a
-species were similar, auditory sensitivity differed clearly
-between species
--  Representatives of those species with large spiracles (P. ornatus, I. modestior) have
-the highest sensitivity
-- In P. ampliatus, a representative of a
-unidirectional communicating species with small acoustic spiracles, hearing thresholds are rather high, mainly
-above 50 dB SPL.
--
-## Discussion
-- the greatest differences exist between bidirectional and unidirectional communicating species regardless of song characters.
--  Can be assumed that overall body size might be the evolutionary target, if tympanal structures come under positive selection
-- Tympana are important structures for sound perception in Tettigoniidae, and neither the acoustic communication system nor sex greatly affects their size.
-- Limitations and drawbacks of the plots from the paper
--Alternative representation of the plot(morphological comparison plot)
-
-##Challenges faced
--Loading the script-merging multiple datasets from 1 excel sheet
--Recreating morphometric plots by recognizing the general patterns of the plots
--Removed unexplainable data (e.g. rows in meta data with "ex Stumpner & Heller, 1992")
--lack of consistant ID makes reproducibility difficult
